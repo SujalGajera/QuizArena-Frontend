@@ -1,0 +1,106 @@
+/* ============================================================
+   Delete Confirmation Dialog
+   Small floating card with warning message
+   ============================================================ */
+
+.delete-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+}
+
+.delete-dialog {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: var(--shadow-lg);
+  animation: deleteSlideIn 0.25s ease;
+}
+
+@keyframes deleteSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.delete-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.delete-warning-icon {
+  font-size: 16px;
+}
+
+.delete-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-red);
+}
+
+.delete-message {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.delete-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-keep {
+  padding: 8px 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-keep:hover {
+  color: var(--text-primary);
+}
+
+.btn-delete {
+  padding: 8px 20px;
+  background: var(--accent-red);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}

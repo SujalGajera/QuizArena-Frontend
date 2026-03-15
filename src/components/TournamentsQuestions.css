@@ -1,0 +1,218 @@
+/* ============================================================
+   Tournament Questions - View questions modal/panel
+   ============================================================ */
+
+.questions-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.questions-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 700px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  animation: modalSlideIn 0.3s ease;
+}
+
+/* Header */
+.questions-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.questions-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.questions-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.questions-badge {
+  padding: 4px 12px;
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.questions-diff {
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--accent-purple-light);
+}
+
+.questions-count {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Scrollable body */
+.questions-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 28px 28px;
+}
+
+.questions-loading,
+.questions-error {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.questions-error {
+  color: var(--accent-red);
+}
+
+/* Individual question item */
+.question-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.question-item:last-child {
+  border-bottom: none;
+}
+
+.question-number {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-cyan);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.question-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.question-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+/* Answer display */
+.answer-correct {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: rgba(63, 185, 80, 0.08);
+  border: 1px solid rgba(63, 185, 80, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.answer-incorrect {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(248, 81, 73, 0.05);
+  border: 1px solid rgba(248, 81, 73, 0.15);
+  border-radius: var(--radius-sm);
+}
+
+.answer-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.answer-correct .answer-label {
+  color: var(--accent-green);
+}
+
+.answer-correct .answer-value {
+  font-size: 14px;
+  color: var(--accent-green);
+  font-weight: 500;
+}
+
+.incorrect-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.incorrect-item {
+  padding: 3px 10px;
+  background: rgba(248, 81, 73, 0.08);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Question type badge */
+.question-type-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .questions-header {
+    padding: 20px;
+  }
+
+  .questions-body {
+    padding: 16px 20px 20px;
+  }
+
+  .question-item {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .answer-correct {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
