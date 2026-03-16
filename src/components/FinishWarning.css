@@ -1,0 +1,45 @@
+.finish-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+}
+
+.finish-dialog {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: modalSlideIn 0.25s ease;
+}
+
+.finish-icon { font-size: 40px; margin-bottom: 16px; }
+.finish-title { font-size: 18px; font-weight: 700; color: var(--accent-orange); margin-bottom: 12px; }
+.finish-message { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+.finish-message strong { color: var(--accent-cyan); }
+.finish-confirm-text { font-size: 14px; color: var(--text-primary); font-weight: 500; margin-bottom: 24px; }
+
+.finish-actions { display: flex; gap: 12px; justify-content: center; }
+
+.btn-finish-cancel {
+  padding: 10px 24px; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-md); color: var(--text-primary); font-size: 14px;
+  font-weight: 600; cursor: pointer; transition: var(--transition);
+}
+.btn-finish-cancel:hover { background: var(--bg-hover); }
+
+.btn-finish-confirm {
+  padding: 10px 24px; background: var(--accent-orange); border: none;
+  border-radius: var(--radius-md); color: white; font-size: 14px;
+  font-weight: 600; cursor: pointer; transition: var(--transition);
+}
+.btn-finish-confirm:hover { background: #b45309; }

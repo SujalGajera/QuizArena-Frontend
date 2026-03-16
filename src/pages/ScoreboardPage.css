@@ -1,0 +1,90 @@
+/* ============================================================
+   Standalone Scoreboard Page
+   ============================================================ */
+
+.sb-page-container {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.sb-page-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.sb-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+/* Summary stats row */
+.sb-summary-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.sb-summary-card {
+  flex: 1;
+  padding: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.sb-sum-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.sb-sum-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+/* Pass/Fail small badges */
+.badge-pass-sm {
+  color: var(--accent-green);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-fail-sm {
+  color: var(--accent-red);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .sb-page-content {
+    padding: 20px 16px;
+  }
+
+  .sb-page-title {
+    font-size: 20px;
+  }
+
+  .sb-summary-row {
+    flex-direction: column;
+  }
+
+  .sb-header-row,
+  .sb-row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .sb-col-total {
+    display: none;
+  }
+}

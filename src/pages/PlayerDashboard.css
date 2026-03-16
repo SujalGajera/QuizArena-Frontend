@@ -1,0 +1,353 @@
+/* ============================================================
+   Player Dashboard - Tournament Arena view
+   Dark theme matching the ProPlayer design
+   ============================================================ */
+
+.player-container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== NAVBAR ===== */
+.player-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.player-nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.player-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.player-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-signout-player {
+  padding: 8px 18px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-signout-player:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.player-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ===== MAIN CONTENT ===== */
+.player-content {
+  flex: 1;
+  padding: 32px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Header */
+.player-header {
+  margin-bottom: 28px;
+}
+
+.player-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.player-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ===== TAB NAVIGATION ===== */
+.player-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.player-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: -1px;
+}
+
+.player-tab:hover {
+  color: var(--text-primary);
+}
+
+.player-tab.tab-active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
+
+.tab-count {
+  padding: 2px 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tab-active .tab-count {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+}
+
+/* ===== TOURNAMENT CARDS GRID ===== */
+.tournament-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.cards-loading,
+.cards-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+/* ===== INDIVIDUAL TOURNAMENT CARD ===== */
+.tournament-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.tournament-card.card-clickable {
+  cursor: pointer;
+}
+
+.tournament-card.card-clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border-color: var(--border-light);
+}
+
+/* Card image / visual area */
+.card-image {
+  height: 140px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+/* Like button on card */
+.card-like-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 2;
+}
+
+.card-like-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.card-like-btn.liked {
+  color: #ef4444;
+}
+
+/* Category badge on card image */
+.card-category-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+/* Card body content */
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.card-creator {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+/* Card metadata (date, difficulty) */
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.card-meta-item svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+/* Like count at the bottom */
+.card-likes {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .player-content {
+    padding: 24px;
+  }
+
+  .tournament-cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .player-nav {
+    padding: 12px 16px;
+  }
+
+  .player-content {
+    padding: 20px 16px;
+  }
+
+  .player-title {
+    font-size: 24px;
+  }
+
+  .player-tabs {
+    overflow-x: auto;
+    gap: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .player-tab {
+    white-space: nowrap;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .tournament-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ===== View Tabs in Navbar ===== */
+.player-view-tabs { display: flex; gap: 4px; margin-left: 32px; }
+.view-tab { padding: 8px 16px; background: transparent; border: none; color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; border-radius: var(--radius-md); transition: var(--transition); }
+.view-tab:hover { color: var(--text-primary); background: var(--bg-hover); }
+.view-tab.view-tab-active { color: var(--accent-cyan); background: rgba(6,182,212,0.1); }
+
+/* ===== Results Table ===== */
+.results-table-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.results-header-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; padding: 14px 24px; background: var(--bg-primary); border-bottom: 1px solid var(--border); }
+.results-header-row div { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.results-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; padding: 14px 24px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: var(--transition); }
+.results-row:hover { background: rgba(6,182,212,0.03); }
+.results-row:last-child { border-bottom: none; }
+.results-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.results-date { font-size: 13px; color: var(--text-secondary); }
+.mini-badge { padding: 3px 10px; border-radius: var(--radius-full); font-size: 11px; font-weight: 600; color: white; }
+.rank-number { font-size: 16px; font-weight: 700; color: var(--accent-cyan); }
+.badge-pass-sm { color: var(--accent-green); font-size: 13px; font-weight: 600; }
+.badge-fail-sm { color: var(--accent-red); font-size: 13px; font-weight: 600; }
+.sb-score-badge { padding: 4px 12px; border-radius: var(--radius-full); font-size: 13px; font-weight: 700; color: white; }
+
+@media (max-width: 768px) {
+  .player-view-tabs { margin-left: 0; margin-top: 8px; }
+  .player-nav-left { flex-wrap: wrap; }
+  .results-header-row, .results-row { grid-template-columns: 2fr 1fr 1fr; }
+  .results-header-row div:nth-child(n+4), .results-row div:nth-child(n+4) { display: none; }
+}
+}

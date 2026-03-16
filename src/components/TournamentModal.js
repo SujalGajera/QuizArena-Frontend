@@ -44,19 +44,19 @@ function TournamentModal({ mode, tournament, onClose, onSaved, user }) {
 
   // Populate form fields if editing an existing tournament
   useEffect(() => {
-    if (mode === 'edit' && tournament) {
-      setCreator(tournament.creator || '');
-      setName(tournament.name || '');
-      setCategory(tournament.category || '');
-      setDifficulty(tournament.difficulty || '');
-      setStartDate(tournament.startDate || '');
-      setEndDate(tournament.endDate || '');
-      setMinPassingScore(tournament.minPassingScore || 7);
-    } else {
-      // Default creator to current admin user
-      setCreator(user ? (user.firstName + ' ' + user.lastName) : '');
-    }
-  }, [mode, tournament, user]);
+  if (mode === 'edit' && tournament) {
+    setCreator(tournament.creator || '');
+    setName(tournament.name || '');
+    setCategory(tournament.category || '');
+    setDifficulty(tournament.difficulty || '');
+    setStartDate(tournament.startDate || '');
+    setEndDate(tournament.endDate || '');
+    setMinPassingScore(tournament.minPassingScore || 7);
+  } else {
+    // Always auto-fill creator from logged-in admin user — not editable
+    setCreator(user ? (user.firstName + ' ' + user.lastName) : '');
+  }
+}, [mode, tournament, user]);
 
   // Validate form before submission
   const validateForm = () => {
@@ -166,12 +166,12 @@ function TournamentModal({ mode, tournament, onClose, onSaved, user }) {
               <div className="input-with-icon">
                 <span className="input-icon-text">👤</span>
                 <input
-                  type="text"
-                  className={`modal-input ${errors.creator ? 'modal-input-error' : ''}`}
-                  value={creator}
-                  onChange={(e) => setCreator(e.target.value)}
-                  placeholder="System Admin"
-                  disabled={mode === 'edit'}
+                    type="text"
+                    className={`modal-input ${errors.creator ? 'modal-input-error' : ''}`}
+                    value={creator}
+                    onChange={(e) => setCreator(e.target.value)}
+                    placeholder="System Admin"
+                    disabled={true}
                 />
               </div>
               {errors.creator && <span className="modal-field-error">{errors.creator}</span>}

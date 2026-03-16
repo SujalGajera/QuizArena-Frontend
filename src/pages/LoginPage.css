@@ -332,4 +332,33 @@
   .login-form-card {
     padding: 24px;
   }
+
+  /* ===== Password Toggle ===== */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  padding-right: 44px !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--text-primary);
+}
 }

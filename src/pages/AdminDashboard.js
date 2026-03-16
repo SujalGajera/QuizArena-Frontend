@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import tournamentService from '../services/tournamentService';
 import authService from '../services/authService';
 import TournamentModal from '../components/TournamentModal';
+import ProfileModal from '../components/ProfileModal';
 import DeleteConfirm from '../components/DeleteConfirm';
 import TournamentQuestions from '../components/TournamentQuestions';
 import './AdminDashboard.css';
@@ -30,6 +31,10 @@ function AdminDashboard({ user, onLogout }) {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const tournamentsPerPage = 4;
+
+  // Inside the component, add state:
+const [showProfile, setShowProfile] = useState(false);
+const [currentUser, setCurrentUser] = useState(user);
 
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -68,6 +73,20 @@ function AdminDashboard({ user, onLogout }) {
     onLogout();
     navigate('/');
   };
+
+  //Recent added function to update user info in the dashboard after profile edit
+  const handleProfileUpdated = (updatedUser) => {
+  setCurrentUser({ ...currentUser, ...updatedUser });
+  const stored = JSON.parse(localStorage.getItem('quizUser') || '{}');
+  localStorage.setItem('quizUser', JSON.stringify({ ...stored, ...updatedUser }));
+};
+
+<div className="admin-avatar" onClick={() => setShowProfile(true)} style={{ cursor: 'pointer' }} title="Edit Profile">
+  {getInitials(currentUser.firstName + ' ' + currentUser.lastName)}
+  {showProfile && (
+  <ProfileModal user={currentUser} onClose={() => setShowProfile(false)} onProfileUpdated={handleProfileUpdated} />
+)}
+</div>
 
   // Filter tournaments based on search term
   const filteredTournaments = tournaments.filter((t) => {
@@ -189,7 +208,7 @@ function AdminDashboard({ user, onLogout }) {
                 <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <span className="admin-logo-text">ARENA</span>
+            <span className="admin-logo-text">Trivia Turf</span>
           </div>
         </div>
 
@@ -392,7 +411,7 @@ function AdminDashboard({ user, onLogout }) {
 
       {/* ===== FOOTER ===== */}
       <footer className="admin-footer">
-        <span>© 2024 ARENA Tournament Systems. All rights reserved.</span>
+        <span>© 2026 Trivia Turf. All rights reserved.</span>
         <div className="footer-links">
           <span>Documentation</span>
           <span>API Access</span>
