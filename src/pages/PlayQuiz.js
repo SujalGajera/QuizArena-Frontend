@@ -68,6 +68,11 @@ function PlayQuiz({ user }) {
       const answersArray = questions.map((_, index) => selectedAnswers[index] || '');
       const result = await playerService.submitAnswers(tournamentId, user.id, answersArray);
       if (result.success) {
+        // Cache feedback locally since backend PlayerScore entity only saves the final score, not the answers
+        if (result.feedback) {
+          localStorage.setItem(`quiz_feedback_${user.id}_${tournamentId}`, JSON.stringify(result.feedback));
+        }
+        
         navigate(`/result/${tournamentId}`, {
           state: { result: result, tournamentName: tournamentName }
         });

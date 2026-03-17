@@ -138,7 +138,25 @@ function QuizResult({ user, onLogout }) {
   const totalQuestions = resultData?.totalQuestions ?? 10;
   const passed = resultData?.passed ?? false;
   const tournamentName = resultData?.tournamentName || location.state?.tournamentName || 'Quiz';
-  const questions = resultData?.questions || [];
+  
+  // Try to get player's specific answers (backend returns it as 'feedback' on submit, but doesn't save it)
+  // 1. Try from location.state (immediate post-quiz)
+  // 2. Try from localStorage (saved during PlayQuiz.js submission)
+  // 3. Fallback to any 'questions' array if backend ever adds it later
+  const getPlayerAnswers = () => {
+    if (resultData?.feedback && resultData.feedback.length > 0) return resultData.feedback;
+    if (resultData?.questions && resultData.questions.length > 0) return resultData.questions;
+    
+    try {
+      const cached = localStorage.getItem(`quiz_feedback_${user.id}_${tournamentId}`);
+      if (cached) return JSON.parse(cached);
+    } catch (e) {
+      console.warn('Could not parse cached quiz feedback');
+    }
+    return [];
+  };
+  
+  const playerAnswersData = getPlayerAnswers();
   const correctCount = resultData?.correctCount ?? score;
   const incorrectCount = resultData?.incorrectCount ?? (totalQuestions - score);
 
@@ -235,12 +253,12 @@ function QuizResult({ user, onLogout }) {
           </div>
         </div>
 
-        {/* Review Answers Section — from result data if available */}
-        {showReview && questions.length > 0 && (
+        {/* Review Answers Section (Fallback if fetching fails, normally hidden if fetching succeeds) */}
+        {showReview && playerAnswersData.length > 0 && tournamentQuestions.length === 0 && (
           <div className="review-answers-section">
-            <h3 className="review-title">📋 Your Answers — {questions.length} Questions</h3>
+            <h3 className="review-title">📋 Your Answers — {playerAnswersData.length} Questions</h3>
 
-            {questions.map((q, index) => {
+            {playerAnswersData.map((q, index) => {
               const playerAnswer = q.playerAnswer || q.selectedAnswer || '';
               const correctAnswer = q.correctAnswer || '';
               const isCorrect = q.correct ?? (playerAnswer === correctAnswer);
@@ -287,9 +305,49 @@ function QuizResult({ user, onLogout }) {
             ) : (
               tournamentQuestions.map((q, index) => {
                 const incorrectAnswers = parseIncorrectAnswers(q.incorrectAnswers);
+                
+                // Find matching player answer data from the result payload/cache
+                // Backend feedback array matches by questionText or questionOrder
+                const playerQData = playerAnswersData.find(
+                  pq => pq.questionText === q.questionText || pq.question === q.questionText || pq.questionOrder === q.questionOrder
+                );
+                
+                const playerAnswer = playerQData ? (playerQData.playerAnswer || playerQData.selectedAnswer || '') : '';
+                const isCorrect = playerQData ? (playerQData.isCorrect ?? playerQData.correct ?? (playerAnswer === q.correctAnswer)) : false;
+                const isSkipped = playerQData ? (!playerAnswer || playerAnswer === '') : true;
 
+                // If we don't have player data, just show the answers normally
+                if (!playerQData && playerAnswersData.length === 0) {
+                     return (
+                        <div key={q.id || index} className="review-item">
+                          <div className="review-q-number">{q.questionOrder || index + 1}</div>
+                          <div className="review-q-content">
+                            <p className="review-q-text">{q.questionText}</p>
+                            <div className="review-answer-box ra-correct" style={{ marginBottom: '8px' }}>
+                              <span className="ra-label">✓ Correct Answer</span>
+                              <span className="ra-value">{q.correctAnswer}</span>
+                            </div>
+                            {incorrectAnswers.length > 0 && (
+                              <div className="review-answer-box ra-wrong">
+                                <span className="ra-label">✗ Incorrect Answers</span>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
+                                  {incorrectAnswers.map((ans, i) => (
+                                    <span key={i} style={{
+                                      padding: '4px 12px', background: 'rgba(248, 81, 73, 0.08)',
+                                      borderRadius: 'var(--radius-sm)', fontSize: '13px', color: 'var(--text-secondary)'
+                                    }}>{ans}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                     );
+                }
+
+                // If we HAVE player data, show the comparison
                 return (
-                  <div key={q.id || index} className="review-item">
+                  <div key={q.id || index} className={`review-item ${isCorrect ? 'review-correct' : 'review-wrong'}`}>
                     {/* Question number */}
                     <div className="review-q-number">{q.questionOrder || index + 1}</div>
 
@@ -297,27 +355,39 @@ function QuizResult({ user, onLogout }) {
                     <div className="review-q-content">
                       <p className="review-q-text">{q.questionText}</p>
 
-                      {/* Correct answer */}
-                      <div className="review-answer-box ra-correct" style={{ marginBottom: '8px' }}>
-                        <span className="ra-label">✓ Correct Answer</span>
-                        <span className="ra-value">{q.correctAnswer}</span>
+                      <div className="review-answers-row">
+                        {/* Correct answer */}
+                        <div className="review-answer-box ra-correct">
+                          <span className="ra-label">✓ Correct Answer</span>
+                          <span className="ra-value">{q.correctAnswer}</span>
+                        </div>
+
+                        {/* Player's answer */}
+                        {playerQData && (
+                          <div className={`review-answer-box ${isCorrect ? 'ra-correct' : isSkipped ? 'ra-skipped' : 'ra-wrong'}`}>
+                            <span className="ra-label">
+                              {isSkipped ? '⊘ Your Answer' : isCorrect ? '✓ Your Answer' : '✗ Your Answer'}
+                            </span>
+                            <span className="ra-value">
+                              {isSkipped ? 'Skipped' : playerAnswer}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Incorrect answers */}
-                      {incorrectAnswers.length > 0 && (
-                        <div className="review-answer-box ra-wrong">
-                          <span className="ra-label">✗ Incorrect Answers</span>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
-                            {incorrectAnswers.map((ans, i) => (
-                              <span key={i} style={{
-                                padding: '4px 12px',
-                                background: 'rgba(248, 81, 73, 0.08)',
-                                borderRadius: 'var(--radius-sm)',
-                                fontSize: '13px',
-                                color: 'var(--text-secondary)'
-                              }}>{ans}</span>
-                            ))}
-                          </div>
+                      {/* Status label */}
+                      {playerQData && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+                          <span className={`review-status ${isCorrect ? 'status-correct' : isSkipped ? 'status-skipped' : 'status-wrong'}`} style={{ marginTop: 0 }}>
+                            {isCorrect ? '✓ Correct' : isSkipped ? '⊘ Skipped' : '✗ Incorrect'}
+                          </span>
+                          
+                          {/* Show other incorrect options if they exist so the user can still see them */}
+                          {!isCorrect && incorrectAnswers.length > 0 && (
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              Other options: {incorrectAnswers.filter(a => a !== playerAnswer).join(', ')}
+                            </span>
+                          )}
                         </div>
                       )}
 
