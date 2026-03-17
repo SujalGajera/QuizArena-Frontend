@@ -1,7 +1,9 @@
 /* ============================================================
    Player Dashboard - Tournament Arena view
-   Dark theme matching the ProPlayer design
+   Dark theme matching the design system
    ============================================================ */
+
+/* ===== CONTAINER ===== */
 
 .player-container {
   min-height: 100vh;
@@ -11,6 +13,7 @@
 }
 
 /* ===== NAVBAR ===== */
+
 .player-nav {
   display: flex;
   align-items: center;
@@ -73,7 +76,38 @@
   font-weight: 700;
 }
 
+/* ===== VIEW TABS IN NAVBAR ===== */
+
+.player-view-tabs {
+  display: flex;
+  gap: 4px;
+  margin-left: 32px;
+}
+
+.view-tab {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.view-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.view-tab.view-tab-active {
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.1);
+}
+
 /* ===== MAIN CONTENT ===== */
+
 .player-content {
   flex: 1;
   padding: 32px;
@@ -101,6 +135,7 @@
 }
 
 /* ===== TAB NAVIGATION ===== */
+
 .player-tabs {
   display: flex;
   gap: 8px;
@@ -149,6 +184,7 @@
 }
 
 /* ===== TOURNAMENT CARDS GRID ===== */
+
 .tournament-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -165,6 +201,7 @@
 }
 
 /* ===== INDIVIDUAL TOURNAMENT CARD ===== */
+
 .tournament-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -282,7 +319,136 @@
   color: var(--text-muted);
 }
 
+/* ===== RESULTS & LEADERBOARD TABLE ===== */
+
+.results-table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.results-header-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 14px 24px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.results-header-row div {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.results-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.results-row:hover {
+  background: rgba(6, 182, 212, 0.03);
+}
+
+.results-row:last-child {
+  border-bottom: none;
+}
+
+.results-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.results-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.mini-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+}
+
+.rank-number {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.badge-pass-sm {
+  color: var(--accent-green);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-fail-sm {
+  color: var(--accent-red);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sb-score-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+}
+
+/* ===== LEADERBOARD ROWS ===== */
+
+.leaderboard-header-row {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
+  padding: 14px 24px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  align-items: center;
+}
+
+.leaderboard-header-row div {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.leaderboard-row:hover {
+  background: rgba(6, 182, 212, 0.03);
+}
+
+.leaderboard-row:last-child {
+  border-bottom: none;
+}
+
 /* ===== RESPONSIVE ===== */
+
 @media (max-width: 900px) {
   .player-content {
     padding: 24px;
@@ -292,11 +458,60 @@
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 16px;
   }
+
+  .results-header-row,
+  .results-row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .results-header-row div:nth-child(n+4),
+  .results-row div:nth-child(n+4) {
+    display: none;
+  }
+
+  .leaderboard-header-row,
+  .leaderboard-row {
+    grid-template-columns: 0.5fr 2fr 1fr;
+  }
+
+  .leaderboard-header-row div:nth-child(n+4),
+  .leaderboard-row div:nth-child(n+4) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .player-view-tabs {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  .player-nav-left {
+    flex-wrap: wrap;
+  }
+
+  .results-header-row,
+  .results-row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .results-header-row div:nth-child(n+4),
+  .results-row div:nth-child(n+4) {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {
   .player-nav {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .player-view-tabs {
+    margin-left: 0;
+    width: 100%;
+    order: 3;
   }
 
   .player-content {
@@ -322,32 +537,4 @@
   .tournament-cards-grid {
     grid-template-columns: 1fr;
   }
-
-  /* ===== View Tabs in Navbar ===== */
-.player-view-tabs { display: flex; gap: 4px; margin-left: 32px; }
-.view-tab { padding: 8px 16px; background: transparent; border: none; color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; border-radius: var(--radius-md); transition: var(--transition); }
-.view-tab:hover { color: var(--text-primary); background: var(--bg-hover); }
-.view-tab.view-tab-active { color: var(--accent-cyan); background: rgba(6,182,212,0.1); }
-
-/* ===== Results Table ===== */
-.results-table-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.results-header-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; padding: 14px 24px; background: var(--bg-primary); border-bottom: 1px solid var(--border); }
-.results-header-row div { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.results-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; padding: 14px 24px; border-bottom: 1px solid var(--border); align-items: center; cursor: pointer; transition: var(--transition); }
-.results-row:hover { background: rgba(6,182,212,0.03); }
-.results-row:last-child { border-bottom: none; }
-.results-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-.results-date { font-size: 13px; color: var(--text-secondary); }
-.mini-badge { padding: 3px 10px; border-radius: var(--radius-full); font-size: 11px; font-weight: 600; color: white; }
-.rank-number { font-size: 16px; font-weight: 700; color: var(--accent-cyan); }
-.badge-pass-sm { color: var(--accent-green); font-size: 13px; font-weight: 600; }
-.badge-fail-sm { color: var(--accent-red); font-size: 13px; font-weight: 600; }
-.sb-score-badge { padding: 4px 12px; border-radius: var(--radius-full); font-size: 13px; font-weight: 700; color: white; }
-
-@media (max-width: 768px) {
-  .player-view-tabs { margin-left: 0; margin-top: 8px; }
-  .player-nav-left { flex-wrap: wrap; }
-  .results-header-row, .results-row { grid-template-columns: 2fr 1fr 1fr; }
-  .results-header-row div:nth-child(n+4), .results-row div:nth-child(n+4) { display: none; }
-}
 }

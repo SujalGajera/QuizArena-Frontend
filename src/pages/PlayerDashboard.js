@@ -184,21 +184,57 @@ function PlayerDashboard({ user, onLogout }) {
               <h1 className="player-title">My Quiz Results</h1>
               <p className="player-subtitle">Track your performance across all tournaments.</p>
             </div>
-            {historyLoading ? (<div className="cards-loading">Loading results...</div>) : history.length === 0 ? (
-              <div className="cards-empty">You haven't completed any quizzes yet. Go play some tournaments!</div>
+            {historyLoading ? (
+              <div className="cards-loading">Loading results...</div>
+            ) : history.length === 0 ? (
+              <div className="cards-empty">
+                You haven't completed any quizzes yet. Go play some tournaments!
+              </div>
             ) : (
               <div className="results-table-container">
                 <div className="results-header-row">
-                  <div>Tournament</div><div>Category</div><div>Difficulty</div><div>Score</div><div>Date</div><div>Status</div>
+                  <div>Tournament</div>
+                  <div>Category</div>
+                  <div>Difficulty</div>
+                  <div>Score</div>
+                  <div>Date</div>
+                  <div>Status</div>
                 </div>
                 {history.map((h, i) => (
-                  <div key={i} className="results-row" onClick={() => navigate(`/result/${h.tournamentId}`)}>
+                  <div key={i} className="results-row"
+                    onClick={() => navigate(`/result/${h.tournamentId}`)}>
                     <div className="results-name">{h.tournamentName || 'Unknown'}</div>
-                    <div><span className="mini-badge" style={{background:getCategoryColor(h.category)}}>{shortenCategory(h.category)}</span></div>
-                    <div><span style={{color:getDifficultyColor(h.difficulty)}}>{h.difficulty?.charAt(0).toUpperCase()+h.difficulty?.slice(1)}</span></div>
-                    <div><span className="sb-score-badge" style={{background:getScoreColor(h.score)}}>{h.score}/10</span></div>
+                    <div>
+                      {h.category ? (
+                        <span className="mini-badge"
+                          style={{ background: getCategoryColor(h.category) }}>
+                          {shortenCategory(h.category)}
+                        </span>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>—</span>
+                      )}
+                    </div>
+                    <div>
+                      {h.difficulty ? (
+                        <span style={{ color: getDifficultyColor(h.difficulty), fontSize: '13px', fontWeight: 500 }}>
+                          {h.difficulty.charAt(0).toUpperCase() + h.difficulty.slice(1)}
+                        </span>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>—</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="sb-score-badge"
+                        style={{ background: getScoreColor(h.score || 0) }}>
+                        {h.score || 0}/10
+                      </span>
+                    </div>
                     <div className="results-date">{formatDate(h.completedDate)}</div>
-                    <div><span className={h.passed?'badge-pass-sm':'badge-fail-sm'}>{h.passed?'✓ Pass':'✗ Fail'}</span></div>
+                    <div>
+                      <span className={h.passed ? 'badge-pass-sm' : 'badge-fail-sm'}>
+                        {h.passed ? '✓ Pass' : '✗ Fail'}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -213,20 +249,35 @@ function PlayerDashboard({ user, onLogout }) {
               <h1 className="player-title">🏆 Global Leaderboard</h1>
               <p className="player-subtitle">Top players across all tournaments.</p>
             </div>
-            {leaderboardLoading ? (<div className="cards-loading">Loading leaderboard...</div>) : leaderboard.length === 0 ? (
+            {leaderboardLoading ? (
+              <div className="cards-loading">Loading leaderboard...</div>
+            ) : leaderboard.length === 0 ? (
               <div className="cards-empty">No leaderboard data yet.</div>
             ) : (
               <div className="results-table-container">
-                <div className="results-header-row">
-                  <div>Rank</div><div>Player</div><div>Total Score</div><div>Quizzes Completed</div><div>Average Score</div>
+                <div className="leaderboard-header-row">
+                  <div>Rank</div>
+                  <div>Player</div>
+                  <div>Total Score</div>
+                  <div>Quizzes</div>
+                  <div>Average</div>
                 </div>
                 {leaderboard.map((entry, i) => (
-                  <div key={i} className="results-row">
+                  <div key={i} className="leaderboard-row">
                     <div className="rank-number">#{i + 1}</div>
                     <div className="results-name">{entry.playerName}</div>
-                    <div><span className="sb-score-badge" style={{background:getScoreColor(entry.averageScore)}}>{entry.totalScore}</span></div>
-                    <div>{entry.tournamentsCompleted}</div>
-                    <div>{entry.averageScore}/10</div>
+                    <div>
+                      <span className="sb-score-badge"
+                        style={{ background: getScoreColor(entry.averageScore) }}>
+                        {entry.totalScore}
+                      </span>
+                    </div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                      {entry.tournamentsCompleted}
+                    </div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                      {entry.averageScore}/10
+                    </div>
                   </div>
                 ))}
               </div>

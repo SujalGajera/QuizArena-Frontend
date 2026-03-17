@@ -130,9 +130,9 @@
   margin-bottom: 14px;
 }
 
-/* Answer display */
-/* Fix text formatting — ensure labels and values don't overlap */
-.answer-correct {
+/* Answer display in question view */
+/* Scoped within .question-content to avoid conflicts with PlayQuiz answer labels */
+.question-content .answer-correct {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -143,7 +143,7 @@
   border-radius: var(--radius-sm);
 }
 
-.answer-incorrect {
+.question-content .answer-incorrect {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -153,24 +153,32 @@
   border-radius: var(--radius-sm);
 }
 
-.answer-label {
+.question-content .answer-label {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   display: block;
   margin-bottom: 2px;
+  /* Override PlayQuiz answer-label styles */
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  border: none;
+  background: none;
+  justify-content: flex-start;
 }
 
-.answer-correct .answer-label {
+.question-content .answer-correct .answer-label {
   color: var(--accent-green);
 }
 
-.answer-correct .answer-value {
+.question-content .answer-correct .answer-value {
   font-size: 14px;
   color: var(--accent-green);
   font-weight: 500;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  display: block;
 }
 
 .incorrect-list {

@@ -1,42 +1,100 @@
+/* ============================================================
+   Profile Modal - User profile edit overlay
+   ============================================================ */
+
+/* ===== BACKDROP ===== */
+
 .profile-backdrop {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000; padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
 }
+
+/* ===== MODAL CONTAINER ===== */
 
 .profile-modal {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 32px; width: 100%;
-  max-width: 600px; box-shadow: var(--shadow-lg);
-  animation: modalSlideIn 0.3s ease; max-height: 90vh; overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: var(--shadow-lg);
+  animation: modalSlideIn 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
 }
+
+/* ===== HEADER ===== */
 
 .profile-modal-header {
-  display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }
 
-.profile-modal-title { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-.profile-modal-subtitle { font-size: 13px; color: var(--text-secondary); }
+.profile-modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
 
-.profile-form { display: flex; flex-direction: column; gap: 18px; }
+.profile-modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ===== FORM ===== */
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ===== SUCCESS MESSAGE ===== */
 
 .profile-success {
-  background: rgba(63, 185, 80, 0.1); border: 1px solid var(--accent-green);
-  color: var(--accent-green); padding: 10px 14px; border-radius: var(--radius-md);
-  font-size: 13px; margin-bottom: 12px;
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 12px;
 }
 
+/* ===== ROLE BADGE ===== */
+
 .profile-role-badge {
-  font-size: 13px; color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
 .role-tag {
-  padding: 3px 12px; background: var(--accent-purple);
-  color: white; border-radius: var(--radius-full);
-  font-size: 12px; font-weight: 600;
+  padding: 3px 12px;
+  background: var(--accent-purple);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
 }
 
+/* ===== RESPONSIVE ===== */
+
 @media (max-width: 600px) {
-  .profile-modal { padding: 24px; }
+  .profile-modal {
+    padding: 24px;
+  }
 }

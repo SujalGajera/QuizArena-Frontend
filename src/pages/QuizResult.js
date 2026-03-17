@@ -1,208 +1,349 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import playerService from '../services/playerService';
-import FinishWarning from '../components/FinishWarning';
-import './PlayQuiz.css';
+import tournamentService from '../services/tournamentService';
+import './QuizResult.css';
 
 /**
- * PlayQuiz - Quiz playing interface with finish warning.
- * Shows warning if player tries to finish without answering all questions.
+ * QuizResult - Displays quiz results after completion or when reviewing past quizzes.
+ * Shows:
+ *  - Score out of 10 with pass/fail status
+ *  - All questions with correct, incorrect, and skipped answer tracking
+ *  - Works from both post-quiz navigation (with state) and Results tab click (fetches data)
  */
-function PlayQuiz({ user }) {
+function QuizResult({ user, onLogout }) {
   const { tournamentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [questions, setQuestions] = useState([]);
-  const [tournamentName, setTournamentName] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
+  // State from navigation (after completing quiz) or fetched from API
+  const [resultData, setResultData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [showFinishWarning, setShowFinishWarning] = useState(false);
+  const [showReview, setShowReview] = useState(true);
+
+  // Separately fetched tournament questions (for answer tracking)
+  const [tournamentQuestions, setTournamentQuestions] = useState([]);
+  const [questionsLoading, setQuestionsLoading] = useState(true);
 
   useEffect(() => {
-    const startQuiz = async () => {
-      try {
-        const data = await playerService.startQuiz(tournamentId, user.id);
-        if (data.success) {
-          setQuestions(data.questions || []);
-          setTournamentName(data.tournamentName || 'Quiz');
-        } else { setError(data.message || 'Unable to start quiz'); }
-      } catch (err) {
-        if (err.response && err.response.data) { setError(err.response.data.message || 'Unable to start quiz'); }
-        else { setError('Unable to connect to server'); }
-      } finally { setLoading(false); }
-    };
-    startQuiz();
-  }, [tournamentId, user.id]);
-
-  const handleSelectAnswer = (answer) => {
-    setSelectedAnswers({ ...selectedAnswers, [currentIndex]: answer });
-  };
-
-  const handleBack = () => { if (currentIndex > 0) setCurrentIndex(currentIndex - 1); };
-
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      // Last question - check if all answered
-      const unanswered = questions.length - Object.keys(selectedAnswers).length;
-      if (unanswered > 0) {
-        setShowFinishWarning(true);
-      } else {
-        handleSubmit();
+    const loadResult = async () => {
+      // Check if result data was passed via navigation state (post-quiz)
+      if (location.state && location.state.result) {
+        setResultData(location.state.result);
+        setLoading(false);
+        return;
       }
+
+      // Otherwise, fetch from API (clicking from Results tab)
+      try {
+        const data = await playerService.getPlayerScore(tournamentId, user.id);
+        if (data.success) {
+          setResultData(data);
+        } else {
+          setError(data.message || 'Unable to load results');
+        }
+      } catch (err) {
+        if (err.response && err.response.data) {
+          setError(err.response.data.message || 'Unable to load results');
+        } else {
+          setError('Unable to connect to server');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadResult();
+  }, [tournamentId, user.id, location.state]);
+
+  // Always fetch the tournament questions separately for answer tracking
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const data = await tournamentService.getTournamentQuestions(tournamentId);
+        if (data.success) {
+          setTournamentQuestions(data.questions || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch tournament questions:', err);
+      } finally {
+        setQuestionsLoading(false);
+      }
+    };
+    fetchQuestions();
+  }, [tournamentId]);
+
+  // Parse incorrect answers from JSON string (same as TournamentQuestions component)
+  const parseIncorrectAnswers = (incorrectStr) => {
+    if (!incorrectStr) return [];
+    try {
+      return JSON.parse(incorrectStr);
+    } catch {
+      return [incorrectStr];
     }
   };
 
-  const handleSkip = () => {
-    if (currentIndex < questions.length - 1) setCurrentIndex(currentIndex + 1);
+  // Helper functions
+  const getInitials = (f, l) => ((f?.[0] || '') + (l?.[0] || '')).toUpperCase();
+
+  const getScoreColor = (score) => {
+    if (score >= 9) return '#10b981';
+    if (score >= 7) return '#06b6d4';
+    if (score >= 5) return '#f59e0b';
+    return '#ef4444';
   };
 
-  const handleSubmit = async () => {
-    setShowFinishWarning(false);
-    setSubmitting(true);
-    try {
-      const answersArray = questions.map((_, index) => selectedAnswers[index] || '');
-      const result = await playerService.submitAnswers(tournamentId, user.id, answersArray);
-      if (result.success) {
-        navigate(`/result/${tournamentId}`, {
-          state: { result: result, tournamentName: tournamentName }
-        });
-      } else { setError(result.message || 'Failed to submit answers'); }
-    } catch (err) {
-      if (err.response && err.response.data) { setError(err.response.data.message || 'Failed to submit'); }
-      else { setError('Unable to connect to server'); }
-    } finally { setSubmitting(false); }
-  };
-
-  const answeredCount = Object.keys(selectedAnswers).length;
-  const progressPercent = questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0;
-  const currentQuestion = questions[currentIndex];
-  const optionLabels = ['A', 'B', 'C', 'D'];
-
+  // Loading state
   if (loading) {
-    return <div className="quiz-container"><div className="quiz-loading">Loading quiz questions...</div></div>;
+    return (
+      <div className="result-container">
+        <div className="quiz-loading" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+          Loading results...
+        </div>
+      </div>
+    );
   }
 
+  // Error state
   if (error) {
     return (
-      <div className="quiz-container">
-        <div className="quiz-error-page">
-          <div className="quiz-error-card">
-            <h2>Unable to Start Quiz</h2>
-            <p>{error}</p>
-            <button className="btn-back-dashboard" onClick={() => navigate('/player')}>← Back to Dashboard</button>
+      <div className="result-container">
+        <nav className="result-nav">
+          <div className="result-nav-left">
+            <div className="result-logo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="4" fill="#2563eb" />
+                <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="result-logo-text">Trivia Turf</span>
+            </div>
+          </div>
+          <div className="result-nav-right">
+            <div className="player-avatar-small">{getInitials(user.firstName, user.lastName)}</div>
+          </div>
+        </nav>
+        <div className="result-main-full" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="quiz-error-card" style={{ textAlign: 'center', padding: '40px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
+            <h2 style={{ color: 'var(--accent-red)', marginBottom: '10px' }}>Unable to Load Results</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>{error}</p>
+            <button className="btn-back-to-dash" onClick={() => navigate('/player')}>← Back to Dashboard</button>
           </div>
         </div>
       </div>
     );
   }
 
+  // Extract result data
+  const score = resultData?.score ?? 0;
+  const totalQuestions = resultData?.totalQuestions ?? 10;
+  const passed = resultData?.passed ?? false;
+  const tournamentName = resultData?.tournamentName || location.state?.tournamentName || 'Quiz';
+  const questions = resultData?.questions || [];
+  const correctCount = resultData?.correctCount ?? score;
+  const incorrectCount = resultData?.incorrectCount ?? (totalQuestions - score);
+
+  // Calculate pass percentage for circle
+  const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+  const circumference = 2 * Math.PI * 58;
+  const dashOffset = circumference - (percentage / 100) * circumference;
+
   return (
-    <div className="quiz-container">
+    <div className="result-container">
       {/* NAVBAR */}
-      <nav className="quiz-nav">
-        <div className="quiz-nav-left">
-          <div className="quiz-logo">
+      <nav className="result-nav">
+        <div className="result-nav-left">
+          <div className="result-logo">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <rect width="24" height="24" rx="4" fill="#2563eb" />
               <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span className="quiz-logo-text">Trivia Turf</span>
+            <span className="result-logo-text">Trivia Turf</span>
           </div>
         </div>
-        <div className="quiz-nav-center">
-          <span className="quiz-category-badge">© {tournamentName}</span>
-          <div className="quiz-dots">
-            {questions.map((_, index) => (
-              <span key={index} className={`quiz-dot ${index === currentIndex ? 'dot-current' : ''} ${selectedAnswers[index] ? 'dot-answered' : ''}`} />
-            ))}
-          </div>
-          <span className="quiz-counter">{currentIndex + 1}/{questions.length}</span>
-        </div>
-        <div className="quiz-nav-right">
-          <div className="player-avatar-small">{(user.firstName?.[0] || '') + (user.lastName?.[0] || '')}</div>
+        <div className="result-nav-right">
+          <button className="btn-back-to-dash" onClick={() => navigate('/player')}>
+            ← Back to Dashboard
+          </button>
+          <div className="player-avatar-small">{getInitials(user.firstName, user.lastName)}</div>
         </div>
       </nav>
 
-      {/* QUIZ CONTENT */}
-      <div className="quiz-content">
-        <div className="quiz-progress-section">
-          <div className="progress-header">
-            <span className="progress-label">Current Progress</span>
-            <span className="progress-percentage">{progressPercent}% Completed</span>
+      {/* MAIN CONTENT */}
+      <div className="result-main-full">
+        {/* Score Summary Card */}
+        <div className="score-summary-card">
+          {/* Score Circle */}
+          <div className="score-circle-container">
+            <svg className="score-circle-svg" width="140" height="140" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="58" fill="none" stroke="var(--border)" strokeWidth="8" />
+              <circle
+                cx="70" cy="70" r="58" fill="none"
+                stroke={passed ? 'var(--accent-green)' : 'var(--accent-red)'}
+                strokeWidth="8" strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={dashOffset}
+                className="score-circle-progress"
+                transform="rotate(-90 70 70)"
+              />
+            </svg>
+            <div className="score-circle-text">
+              <span className="score-big">{score}/{totalQuestions}</span>
+            </div>
+            <span className={`score-status-badge ${passed ? 'badge-pass' : 'badge-fail'}`}>
+              {passed ? '✓ PASSED' : '✗ FAILED'}
+            </span>
           </div>
-          <div className="progress-bar-track">
-            <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }} />
+
+          {/* Score Message */}
+          <div className="score-message">
+            <h2 className="score-message-title">
+              {passed
+                ? score >= 9 ? 'Outstanding Performance! 🏆' : 'Well Done! 🎉'
+                : 'Better Luck Next Time 💪'}
+            </h2>
+            <p className="score-message-desc">
+              {passed
+                ? `You scored ${score} out of ${totalQuestions} in ${tournamentName}. Great work!`
+                : `You scored ${score} out of ${totalQuestions} in ${tournamentName}. Keep practicing!`}
+            </p>
+
+            {/* Inline stats */}
+            <div className="score-inline-stats">
+              <div className="inline-stat">
+                <span className="inline-stat-label">Correct</span>
+                <span className="inline-stat-value" style={{ color: 'var(--accent-green)' }}>{correctCount}</span>
+              </div>
+              <div className="inline-stat">
+                <span className="inline-stat-label">Wrong</span>
+                <span className="inline-stat-value" style={{ color: 'var(--accent-red)' }}>{incorrectCount}</span>
+              </div>
+              <div className="inline-stat">
+                <span className="inline-stat-label">Score</span>
+                <span className="inline-stat-value">{percentage}%</span>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="score-message-actions">
+              <button className="btn-back-to-dash" onClick={() => navigate('/player')}>
+                ← Back to Dashboard
+              </button>
+              <button className="btn-review" onClick={() => setShowReview(!showReview)}>
+                {showReview ? 'Hide Review' : 'Review Answers'}
+              </button>
+            </div>
           </div>
-          <span className="progress-question-label">QUESTION {currentIndex + 1} OF {questions.length}</span>
         </div>
 
-        {currentQuestion && (
-          <>
-            <div className="question-display-card">
-              <div className="question-visual">
-                <div className="question-visual-inner">
-                  <span className="visual-q-number">Q{currentIndex + 1}</span>
-                </div>
-              </div>
-              <div className="question-text-section">
-                <span className="question-category-label">{tournamentName.toUpperCase()}</span>
-                <h2 className="question-main-text">{currentQuestion.questionText}</h2>
-                <p className="question-instruction">Select the correct option below to proceed to the next round.</p>
-              </div>
-            </div>
+        {/* Review Answers Section — from result data if available */}
+        {showReview && questions.length > 0 && (
+          <div className="review-answers-section">
+            <h3 className="review-title">📋 Your Answers — {questions.length} Questions</h3>
 
-            <div className="answer-options-grid">
-              {currentQuestion.answers && currentQuestion.answers.map((answer, index) => (
-                <button key={index} className={`answer-option ${selectedAnswers[currentIndex] === answer ? 'answer-selected' : ''}`}
-                  onClick={() => handleSelectAnswer(answer)}>
-                  <div className={`answer-label ${selectedAnswers[currentIndex] === answer ? 'label-selected' : ''}`}>
-                    {optionLabels[index] || String.fromCharCode(65 + index)}
-                  </div>
-                  <div className="answer-content"><span className="answer-text">{answer}</span></div>
-                  {selectedAnswers[currentIndex] === answer && (
-                    <div className="answer-check">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                        <polyline points="20,6 9,17 4,12" />
-                      </svg>
+            {questions.map((q, index) => {
+              const playerAnswer = q.playerAnswer || q.selectedAnswer || '';
+              const correctAnswer = q.correctAnswer || '';
+              const isCorrect = q.correct ?? (playerAnswer === correctAnswer);
+              const isSkipped = !playerAnswer || playerAnswer === '';
+
+              return (
+                <div key={q.id || index} className={`review-item ${isCorrect ? 'review-correct' : 'review-wrong'}`}>
+                  <div className="review-q-number">{index + 1}</div>
+                  <div className="review-q-content">
+                    <p className="review-q-text">{q.questionText || q.question || `Question ${index + 1}`}</p>
+                    <div className="review-answers-row">
+                      <div className="review-answer-box ra-correct">
+                        <span className="ra-label">✓ Correct Answer</span>
+                        <span className="ra-value">{correctAnswer}</span>
+                      </div>
+                      <div className={`review-answer-box ${isCorrect ? 'ra-correct' : isSkipped ? 'ra-skipped' : 'ra-wrong'}`}>
+                        <span className="ra-label">
+                          {isSkipped ? '⊘ Your Answer' : isCorrect ? '✓ Your Answer' : '✗ Your Answer'}
+                        </span>
+                        <span className="ra-value">
+                          {isSkipped ? 'Skipped' : playerAnswer}
+                        </span>
+                      </div>
                     </div>
-                  )}
-                </button>
-              ))}
-            </div>
+                    <span className={`review-status ${isCorrect ? 'status-correct' : isSkipped ? 'status-skipped' : 'status-wrong'}`}>
+                      {isCorrect ? '✓ Correct' : isSkipped ? '⊘ Skipped' : '✗ Incorrect'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-            <div className="quiz-navigation">
-              <button className="btn-quiz-back" onClick={handleBack} disabled={currentIndex === 0}>← Back</button>
-              <div className="quiz-nav-right-btns">
-                {currentIndex < questions.length - 1 && (
-                  <button className="btn-quiz-skip" onClick={handleSkip}>Skip</button>
-                )}
-                <button className="btn-quiz-next" onClick={handleNext} disabled={submitting}>
-                  {submitting ? 'Submitting...' : currentIndex === questions.length - 1 ? 'FINISH →' : 'NEXT →'}
-                </button>
-              </div>
-            </div>
-          </>
+        {/* Questions & Answers Section — always fetched from tournament */}
+        {showReview && (
+          <div className="review-answers-section">
+            <h3 className="review-title">📖 Questions & Answers — {tournamentName}</h3>
+
+            {questionsLoading ? (
+              <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>Loading questions...</p>
+            ) : tournamentQuestions.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>No questions available.</p>
+            ) : (
+              tournamentQuestions.map((q, index) => {
+                const incorrectAnswers = parseIncorrectAnswers(q.incorrectAnswers);
+
+                return (
+                  <div key={q.id || index} className="review-item">
+                    {/* Question number */}
+                    <div className="review-q-number">{q.questionOrder || index + 1}</div>
+
+                    {/* Question content */}
+                    <div className="review-q-content">
+                      <p className="review-q-text">{q.questionText}</p>
+
+                      {/* Correct answer */}
+                      <div className="review-answer-box ra-correct" style={{ marginBottom: '8px' }}>
+                        <span className="ra-label">✓ Correct Answer</span>
+                        <span className="ra-value">{q.correctAnswer}</span>
+                      </div>
+
+                      {/* Incorrect answers */}
+                      {incorrectAnswers.length > 0 && (
+                        <div className="review-answer-box ra-wrong">
+                          <span className="ra-label">✗ Incorrect Answers</span>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
+                            {incorrectAnswers.map((ans, i) => (
+                              <span key={i} style={{
+                                padding: '4px 12px',
+                                background: 'rgba(248, 81, 73, 0.08)',
+                                borderRadius: 'var(--radius-sm)',
+                                fontSize: '13px',
+                                color: 'var(--text-secondary)'
+                              }}>{ans}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Question type */}
+                      <span style={{
+                        display: 'inline-block', marginTop: '10px', padding: '3px 10px',
+                        background: 'var(--bg-input)', border: '1px solid var(--border)',
+                        borderRadius: 'var(--radius-sm)', fontSize: '11px', color: 'var(--text-muted)'
+                      }}>
+                        {q.type === 'multiple' ? 'Multiple Choice' : 'True / False'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         )}
       </div>
 
-      <div className="quiz-footer-text">🔒 SECURE SESSION • ENCRYPTED PROGRESS</div>
-
-      {/* Finish Warning */}
-      {showFinishWarning && (
-        <FinishWarning
-          unansweredCount={questions.length - answeredCount}
-          totalQuestions={questions.length}
-          onCancel={() => setShowFinishWarning(false)}
-          onFinish={handleSubmit}
-        />
-      )}
+      {/* FOOTER */}
+      <div className="result-footer">
+        © 2026 Trivia Turf. All rights reserved.
+      </div>
     </div>
   );
 }
 
-export default PlayQuiz;
+export default QuizResult;

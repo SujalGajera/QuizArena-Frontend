@@ -1,6 +1,5 @@
 /* ============================================================
-   Login Page - Dark theme with split layout
-   Left: Hero content  |  Right: Sign-in form
+   Login Page Styles
    ============================================================ */
 
 .login-container {
@@ -10,6 +9,7 @@
 }
 
 /* ===== LEFT PANEL ===== */
+
 .login-left {
   flex: 1;
   display: flex;
@@ -19,7 +19,6 @@
   background-color: var(--bg-primary);
 }
 
-/* Logo */
 .login-logo {
   display: flex;
   align-items: center;
@@ -38,7 +37,6 @@
   color: var(--text-primary);
 }
 
-/* Hero content */
 .login-hero {
   flex: 1;
   display: flex;
@@ -63,7 +61,6 @@
   margin-bottom: 40px;
 }
 
-/* Stats boxes */
 .hero-stats {
   display: flex;
   gap: 16px;
@@ -94,7 +91,6 @@
   color: var(--accent-purple);
 }
 
-/* Category badges */
 .hero-badges {
   display: flex;
   gap: 10px;
@@ -120,13 +116,13 @@
   display: inline-block;
 }
 
-/* Footer text */
 .login-footer-text {
   font-size: 13px;
   color: var(--text-muted);
 }
 
 /* ===== RIGHT PANEL ===== */
+
 .login-right {
   flex: 1;
   display: flex;
@@ -145,7 +141,6 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* Form title */
 .form-title {
   font-size: 24px;
   font-weight: 700;
@@ -159,7 +154,6 @@
   margin-bottom: 28px;
 }
 
-/* Error display */
 .form-error {
   background: rgba(248, 81, 73, 0.1);
   border: 1px solid var(--accent-red);
@@ -170,7 +164,6 @@
   margin-bottom: 20px;
 }
 
-/* Form groups */
 .form-group {
   margin-bottom: 20px;
 }
@@ -221,7 +214,41 @@
   color: var(--text-muted);
 }
 
-/* Checkbox */
+/* ===== PASSWORD FIELD WITH EYE TOGGLE ===== */
+
+.password-field-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-field-wrapper .form-input {
+  padding-right: 48px;
+}
+
+.password-eye-btn {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  line-height: 1;
+}
+
+.password-eye-btn:hover {
+  color: var(--accent-purple-light);
+}
+
+/* ===== CHECKBOX ===== */
+
 .form-checkbox {
   display: flex;
   align-items: center;
@@ -242,7 +269,8 @@
   cursor: pointer;
 }
 
-/* Primary button */
+/* ===== PRIMARY BUTTON ===== */
+
 .btn-primary {
   width: 100%;
   padding: 14px;
@@ -269,7 +297,8 @@
   transform: none;
 }
 
-/* Form footer link */
+/* ===== FORM FOOTER ===== */
+
 .form-footer {
   text-align: center;
   font-size: 14px;
@@ -289,6 +318,7 @@
 }
 
 /* ===== RESPONSIVE ===== */
+
 @media (max-width: 900px) {
   .login-container {
     flex-direction: column;
@@ -332,33 +362,4 @@
   .login-form-card {
     padding: 24px;
   }
-
-  /* ===== Password Toggle ===== */
-.password-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-input {
-  padding-right: 44px !important;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 12px;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  transition: var(--transition);
-}
-
-.password-toggle:hover {
-  color: var(--text-primary);
-}
 }
