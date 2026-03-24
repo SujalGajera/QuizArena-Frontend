@@ -15,7 +15,7 @@ function LoginPage({ onLogin }) {
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [keepSignedIn, setKeepSignedIn] = useState(false);
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({ players: 0, tournaments: 0 });

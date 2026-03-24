@@ -87,12 +87,7 @@ function QuizResult({ user, onLogout }) {
   // Helper functions
   const getInitials = (f, l) => ((f?.[0] || '') + (l?.[0] || '')).toUpperCase();
 
-  const getScoreColor = (score) => {
-    if (score >= 9) return '#10b981';
-    if (score >= 7) return '#06b6d4';
-    if (score >= 5) return '#f59e0b';
-    return '#ef4444';
-  };
+
 
   // Loading state
   if (loading) {
