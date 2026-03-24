@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for player endpoints
-const API_URL = 'http://localhost:8080/api/player';
+const API_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/player` : 'http://localhost:8080/api/player';
 
 /**
  * Player service - handles quiz participation, scores, likes, and leaderboard.

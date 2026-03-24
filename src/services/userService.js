@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for user endpoints
-const API_URL = 'http://localhost:8080/api/users';
+const API_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/users` : 'http://localhost:8080/api/users';
 
 /**
  * User service - handles profile viewing, updating, and score retrieval.

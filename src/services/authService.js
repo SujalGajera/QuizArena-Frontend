@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for authentication endpoints
-const API_URL = 'http://localhost:8080/api/auth';
+const API_URL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/auth` : 'http://localhost:8080/api/auth';
 
 /**
  * Auth service - handles login, registration, and logout API calls.

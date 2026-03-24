@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for tournament endpoints
-const API_URL = 'http://localhost:8080/api';
+const API_URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : 'http://localhost:8080/api';
 
 /**
  * Tournament service - handles all admin tournament management API calls.
