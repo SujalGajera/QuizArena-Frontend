@@ -133,7 +133,8 @@ function LoginPage({ onLogin }) {
       {/* LEFT PANEL */}
       <div className="login-left">
         <div className="login-logo">
-          <img src={logo} alt="Trivia Logo" className="logo-icon" />
+          <img src={logo} alt="Trivia Logo" className="logo-icon" style={{ height: '36px', width: 'auto' }} />
+          <span className="logo-text">Trivia Turf</span>
         </div>
 
         <div className="login-hero">

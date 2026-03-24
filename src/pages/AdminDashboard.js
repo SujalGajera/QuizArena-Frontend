@@ -182,7 +182,8 @@ function AdminDashboard({ user, onLogout }) {
       <nav className="admin-nav">
         <div className="admin-nav-left">
           <div className="admin-logo">
-            <img src={logo} alt="Trivia Logo" className="admin-logo-icon" />
+            <img src={logo} alt="Trivia Logo" className="admin-logo-icon" style={{ height: '30px', width: 'auto' }} />
+            <span className="admin-logo-text">Trivia Turf</span>
           </div>
         </div>
         <div className="admin-nav-right">
@@ -245,7 +246,6 @@ function AdminDashboard({ user, onLogout }) {
                 <div className="th-name">TOURNAMENT NAME</div>
                 <div className="th-category">CATEGORY</div>
                 <div className="th-difficulty">DIFFICULTY</div>
-                <div className="th-likes">LIKES</div>
                 <div className="th-duration">DURATION</div>
                 <div className="th-actions">ACTIONS</div>
               </div>
@@ -287,14 +287,7 @@ function AdminDashboard({ user, onLogout }) {
                           tournament.difficulty.slice(1)}
                       </span>
                     </div>
-                    <div className="td-likes">
-                      <span className="likes-badge">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" strokeWidth="2">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                        {tournament.likeCount || 0}
-                      </span>
-                    </div>
+
                     <div className="td-duration">
                       {formatDate(tournament.startDate)} — {formatDate(tournament.endDate)}
                     </div>

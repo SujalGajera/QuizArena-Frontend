@@ -114,6 +114,7 @@ function RegisterPage({ onLogin }) {
       <nav className="register-nav">
         <div className="nav-logo" onClick={() => navigate('/')}>
           <img src={logo} alt="Trivia Logo" className="nav-logo-icon" style={{ height: '30px', width: 'auto' }} />
+          <span>Trivia Turf</span>
         </div>
         <div className="nav-links">
           <span className="nav-link" onClick={() => navigate('/')}>Home</span>
@@ -133,22 +134,19 @@ function RegisterPage({ onLogin }) {
           </div>
           <div className="register-left-text">
             <h2 className="register-heading">
-              Elevate Your<br />
-              <span className="heading-purple">Experience</span>
+              Dominate the<br />
+              <span className="heading-purple">Leaderboard</span>
             </h2>
             <p className="register-subtitle">
-              Join the next generation of creators and explorers in our
-              digital universe. Build, connect, and evolve with our
-              cutting-edge platform.
+              Join a community of curious minds. From pop culture to deep science,
+              build your own challenges or explore thousands of community-made quizzes in our ever-evolving trivia universe.
             </p>
             <div className="feature-badges">
               <span className="feature-badge">
-                <span className="feature-icon">🛡️</span>
-                Enterprise-Grade Security
+                Endless Knowledge
               </span>
               <span className="feature-badge">
-                <span className="feature-icon">⚡</span>
-                Lightning-Fast Performance
+                Compete with Friends
               </span>
             </div>
           </div>

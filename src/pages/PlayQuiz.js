@@ -114,6 +114,7 @@ function PlayQuiz({ user }) {
         <div className="quiz-nav-left">
           <div className="quiz-logo">
             <img src={logo} alt="Trivia Logo" className="quiz-logo-icon" style={{ height: '30px', width: 'auto' }} />
+            <span className="quiz-logo-text">Trivia Turf</span>
           </div>
         </div>
         <div className="quiz-nav-center">

@@ -113,6 +113,7 @@ function QuizResult({ user, onLogout }) {
           <div className="result-nav-left">
             <div className="result-logo">
               <img src={logo} alt="Trivia Logo" className="result-logo-icon" style={{ height: '30px', width: 'auto' }} />
+              <span className="result-logo-text">Trivia Turf</span>
             </div>
           </div>
           <div className="result-nav-right">
@@ -169,6 +170,7 @@ function QuizResult({ user, onLogout }) {
         <div className="result-nav-left">
           <div className="result-logo">
             <img src={logo} alt="Trivia Logo" className="result-logo-icon" style={{ height: '30px', width: 'auto' }} />
+            <span className="result-logo-text">Trivia Turf</span>
           </div>
         </div>
         <div className="result-nav-right">

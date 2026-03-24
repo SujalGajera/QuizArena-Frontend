@@ -217,7 +217,7 @@
 /* Table Header Row */
 .table-header-row {
   display: grid;
-  grid-template-columns: 1.5fr 2fr 1.3fr 0.8fr 0.7fr 1.3fr 0.8fr;
+  grid-template-columns: 1.5fr 2fr 1.3fr 0.8fr 1.3fr 0.8fr;
   padding: 14px 24px;
   background: var(--bg-primary);
   border-bottom: 1px solid var(--border);
@@ -236,7 +236,7 @@
 /* Table Data Row */
 .table-row {
   display: grid;
-  grid-template-columns: 1.5fr 2fr 1.3fr 0.8fr 0.7fr 1.3fr 0.8fr;
+  grid-template-columns: 1.5fr 2fr 1.3fr 0.8fr 1.3fr 0.8fr;
   padding: 14px 24px;
   border-bottom: 1px solid var(--border);
   gap: 12px;
@@ -346,19 +346,7 @@
   color: var(--text-secondary);
 }
 
-/* Likes Cell */
-.td-likes {
-  font-size: 13px;
-}
 
-.likes-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent-red);
-}
 
 /* Actions Cell */
 .td-actions {
@@ -484,7 +472,7 @@
 
   .table-header-row,
   .table-row {
-    grid-template-columns: 1.5fr 2fr 1.2fr 0.8fr 0.7fr 0.8fr;
+    grid-template-columns: 1.5fr 2fr 1.2fr 0.8fr 0.8fr;
   }
 
   /* Hide Duration column on tablets */
@@ -521,13 +509,11 @@
     grid-template-columns: 1.5fr 2fr 0.7fr 1fr;
   }
 
-  /* Hide Category, Duration, Likes columns on mobile */
+  /* Hide Category, Duration columns on mobile */
   .th-category,
   .td-category,
   .th-duration,
-  .td-duration,
-  .th-likes,
-  .td-likes {
+  .td-duration {
     display: none;
   }
 

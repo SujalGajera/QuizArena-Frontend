@@ -115,6 +115,7 @@ function PlayerDashboard({ user, onLogout }) {
         <div className="player-nav-left">
           <div className="player-logo">
             <img src={logo} alt="Trivia Logo" className="player-logo-icon" style={{ height: '30px', width: 'auto' }} />
+            <span className="player-logo-text">Trivia Turf</span>
           </div>
           <div className="player-view-tabs">
             <button className={`view-tab ${activeView === 'dashboard' ? 'view-tab-active' : ''}`} onClick={() => setActiveView('dashboard')}>Dashboard</button>
