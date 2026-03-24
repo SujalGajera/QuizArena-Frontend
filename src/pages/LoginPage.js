@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import tournamentService from '../services/tournamentService';
+import logo from '../assets/Trivia Logo.png';
 import './LoginPage.css';
 
 /**
@@ -18,6 +19,12 @@ function LoginPage({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({ players: 0, tournaments: 0 });
+
+  // Forgot password flow states
+  const [viewMode, setViewMode] = useState('login'); // 'login', 'forgot', 'reset'
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [forgotMessage, setForgotMessage] = useState('');
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -40,7 +47,7 @@ function LoginPage({ onLogin }) {
     e.preventDefault();
     setError('');
 
-    if (!emailOrUsername.trim()) {
+    if (!emailOrUsername.trim()) { 
       setError('Username or email is required');
       return;
     }
@@ -68,19 +75,65 @@ function LoginPage({ onLogin }) {
     }
   };
 
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setForgotMessage('');
+    if (!emailOrUsername.trim()) {
+      setError('Please enter your email');
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await authService.forgotPassword(emailOrUsername);
+      if (result.success) {
+        setForgotMessage('Password reset email sent. Please check your inbox.');
+        setViewMode('reset');
+      } else {
+        setError(result.message || 'Forgot password failed');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Server error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setForgotMessage('');
+    if (!resetToken.trim() || !newPassword.trim()) {
+      setError('Please fill all fields');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await authService.resetPassword(resetToken, newPassword);
+      if (result.success) {
+        setForgotMessage('Password successfully reset. You can now login.');
+        setViewMode('login');
+        setPassword('');
+      } else {
+        setError(result.message || 'Reset password failed');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Server error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-container">
       {/* LEFT PANEL */}
       <div className="login-left">
         <div className="login-logo">
-          <div className="logo-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="6" fill="#7c3aed" />
-              <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5"
-                strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <span className="logo-text">Trivia Turf</span>
+          <img src={logo} alt="Trivia Logo" className="logo-icon" />
         </div>
 
         <div className="login-hero">
@@ -120,12 +173,18 @@ function LoginPage({ onLogin }) {
       {/* RIGHT PANEL */}
       <div className="login-right">
         <div className="login-form-card">
-          <h2 className="form-title">Welcome back</h2>
-          <p className="form-subtitle">Enter your credentials to access the arena</p>
+          <h2 className="form-title">
+            {viewMode === 'login' ? 'Welcome back' : viewMode === 'forgot' ? 'Reset Password' : 'New Password'}
+          </h2>
+          <p className="form-subtitle">
+            {viewMode === 'login' ? 'Enter your credentials to access the arena' : viewMode === 'forgot' ? 'Enter your email to receive a reset token' : 'Enter your reset token and your new password'}
+          </p>
 
           {error && <div className="form-error">{error}</div>}
+          {forgotMessage && <div className="form-success" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '12px', borderRadius: '8px', marginBottom: '20px', fontSize: '14px' }}>{forgotMessage}</div>}
 
-          <form onSubmit={handleSubmit}>
+          {viewMode === 'login' && (
+            <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label">Username or Email</label>
               <input
@@ -140,7 +199,7 @@ function LoginPage({ onLogin }) {
             <div className="form-group">
               <div className="form-label-row">
                 <label className="form-label">Password</label>
-                <span className="forgot-link">Forgot password?</span>
+                <span className="forgot-link" onClick={() => { setViewMode('forgot'); setError(''); setForgotMessage(''); }} style={{ cursor: 'pointer' }}>Forgot password?</span>
               </div>
               <div className="password-field-wrapper">
                 <input
@@ -178,7 +237,7 @@ function LoginPage({ onLogin }) {
               </div>
             </div>
 
-            <div className="form-checkbox">
+            {/* <div className="form-checkbox">
               <input
                 type="checkbox"
                 id="keepSignedIn"
@@ -186,12 +245,65 @@ function LoginPage({ onLogin }) {
                 onChange={(e) => setKeepSignedIn(e.target.checked)}
               />
               <label htmlFor="keepSignedIn">Keep me signed in</label>
-            </div>
+            </div> */}
 
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading ? 'Signing in...' : 'Enter the Arena  →'}
             </button>
           </form>
+          )}
+
+          {viewMode === 'forgot' && (
+            <form onSubmit={handleForgotSubmit}>
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  className="form-input"
+                  placeholder="commander@arena.com"
+                  value={emailOrUsername}
+                  onChange={(e) => setEmailOrUsername(e.target.value)}
+                />
+              </div>
+              <button type="submit" className="btn-primary" disabled={loading} style={{ marginBottom: '15px' }}>
+                {loading ? 'Sending...' : 'Send Reset Link'}
+              </button>
+              <button type="button" className="btn-secondary" onClick={() => { setViewMode('login'); setError(''); setForgotMessage(''); }} style={{ width: '100%', padding: '12px', background: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: '600', cursor: 'pointer', transition: 'background 0.2s', marginTop: '10px' }}>
+                Back to Login
+              </button>
+            </form>
+          )}
+
+          {viewMode === 'reset' && (
+            <form onSubmit={handleResetSubmit}>
+              <div className="form-group">
+                <label className="form-label">Reset Token</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Paste your token here"
+                  value={resetToken}
+                  onChange={(e) => setResetToken(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">New Password</label>
+                <input
+                  type="password"
+                  className="form-input"
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+              <button type="submit" className="btn-primary" disabled={loading} style={{ marginBottom: '15px' }}>
+                {loading ? 'Resetting...' : 'Reset Password'}
+              </button>
+              <button type="button" className="btn-secondary" onClick={() => { setViewMode('login'); setError(''); setForgotMessage(''); }} style={{ width: '100%', padding: '12px', background: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: '600', cursor: 'pointer', transition: 'background 0.2s', marginTop: '10px' }}>
+                Back to Login
+              </button>
+            </form>
+          )}
 
           <p className="form-footer">
             New to the arena?{' '}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import logo from '../assets/Trivia Logo.png';
 import './RegisterPage.css';
 
 /**
@@ -112,13 +113,7 @@ function RegisterPage({ onLogin }) {
       {/* ===== TOP NAVBAR ===== */}
       <nav className="register-nav">
         <div className="nav-logo" onClick={() => navigate('/')}>
-          <div className="nav-logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="6" fill="#7c3aed" />
-              <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <span>Trivia Turf</span>
+          <img src={logo} alt="Trivia Logo" className="nav-logo-icon" style={{ height: '30px', width: 'auto' }} />
         </div>
         <div className="nav-links">
           <span className="nav-link" onClick={() => navigate('/')}>Home</span>

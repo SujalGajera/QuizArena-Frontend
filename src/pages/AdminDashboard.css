@@ -45,6 +45,7 @@
   font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
+  font-family: jet brains, monospace;
 }
 
 .admin-nav-right {
@@ -67,6 +68,7 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition);
+  font-family: jet brains, monospace;
 }
 
 .btn-create-tournament:hover {
@@ -94,6 +96,7 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition);
+  font-family: jet brains, monospace;
 }
 
 .btn-signout:hover {
@@ -115,6 +118,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
+  font-family: jet brains, monospace;
 }
 
 .admin-avatar:hover {
@@ -130,6 +134,7 @@
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
+  font-family: jet brains, monospace;
 }
 
 /* ===== HEADER ===== */
@@ -206,6 +211,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Table Header Row */
@@ -275,12 +281,14 @@
   font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
+  font-family: jet brains, monospace;
 }
 
 .creator-name {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
+  font-family: jet brains, monospace;
 }
 
 /* Tournament Name Cell */
@@ -315,6 +323,7 @@
   white-space: nowrap;
 }
 
+
 /* Difficulty Cell */
 .td-difficulty {
   overflow: hidden;
@@ -329,6 +338,7 @@
   color: white;
   text-transform: capitalize;
 }
+
 
 /* Duration Cell */
 .td-duration {
@@ -462,6 +472,7 @@
   font-size: 12px;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
+  font-family: jet brains, monospace;
 }
 
 /* ===== RESPONSIVE ===== */

@@ -27,6 +27,7 @@
   max-width: 320px;
   box-shadow: var(--shadow-lg);
   animation: deleteSlideIn 0.25s ease;
+  font-family: jet brains, monospace;
 }
 
 @keyframes deleteSlideIn {
@@ -55,6 +56,7 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--accent-red);
+  font-family: jet brains, monospace;
 }
 
 .delete-message {
@@ -62,6 +64,7 @@
   color: var(--text-secondary);
   line-height: 1.5;
   margin-bottom: 20px;
+  font-family: jet brains, monospace;
 }
 
 .delete-actions {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import playerService from '../services/playerService';
 import authService from '../services/authService';
 import ProfileModal from '../components/ProfileModal';
+import logo from '../assets/Trivia Logo.png';
 import './PlayerDashboard.css';
 
 /**
@@ -113,8 +114,7 @@ function PlayerDashboard({ user, onLogout }) {
       <nav className="player-nav">
         <div className="player-nav-left">
           <div className="player-logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#2563eb"/><path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            <span className="player-logo-text">Trivia Turf</span>
+            <img src={logo} alt="Trivia Logo" className="player-logo-icon" style={{ height: '30px', width: 'auto' }} />
           </div>
           <div className="player-view-tabs">
             <button className={`view-tab ${activeView === 'dashboard' ? 'view-tab-active' : ''}`} onClick={() => setActiveView('dashboard')}>Dashboard</button>

@@ -28,6 +28,7 @@
   max-width: 600px;
   box-shadow: var(--shadow-lg);
   animation: modalSlideIn 0.3s ease;
+  font-family: jet brains, monospace;
 }
 
 @keyframes modalSlideIn {

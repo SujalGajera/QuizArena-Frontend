@@ -6,6 +6,7 @@ import TournamentModal from '../components/TournamentModal';
 import DeleteConfirm from '../components/DeleteConfirm';
 import TournamentQuestions from '../components/TournamentQuestions';
 import ProfileModal from '../components/ProfileModal';
+import logo from '../assets/Trivia Logo.png';
 import './AdminDashboard.css';
 
 /**
@@ -181,14 +182,7 @@ function AdminDashboard({ user, onLogout }) {
       <nav className="admin-nav">
         <div className="admin-nav-left">
           <div className="admin-logo">
-            <div className="admin-logo-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect width="24" height="24" rx="4" fill="#2563eb" />
-                <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <span className="admin-logo-text">TRIVIA TURF</span>
+            <img src={logo} alt="Trivia Logo" className="admin-logo-icon" />
           </div>
         </div>
         <div className="admin-nav-right">

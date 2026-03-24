@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import playerService from '../services/playerService';
 import tournamentService from '../services/tournamentService';
+import logo from '../assets/Trivia Logo.png';
 import './QuizResult.css';
 
 /**
@@ -111,11 +112,7 @@ function QuizResult({ user, onLogout }) {
         <nav className="result-nav">
           <div className="result-nav-left">
             <div className="result-logo">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <rect width="24" height="24" rx="4" fill="#2563eb" />
-                <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="result-logo-text">Trivia Turf</span>
+              <img src={logo} alt="Trivia Logo" className="result-logo-icon" style={{ height: '30px', width: 'auto' }} />
             </div>
           </div>
           <div className="result-nav-right">
@@ -171,11 +168,7 @@ function QuizResult({ user, onLogout }) {
       <nav className="result-nav">
         <div className="result-nav-left">
           <div className="result-logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect width="24" height="24" rx="4" fill="#2563eb" />
-              <path d="M7 12l3 3 7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="result-logo-text">Trivia Turf</span>
+            <img src={logo} alt="Trivia Logo" className="result-logo-icon" style={{ height: '30px', width: 'auto' }} />
           </div>
         </div>
         <div className="result-nav-right">

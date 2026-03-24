@@ -20,6 +20,7 @@
   text-align: center;
   box-shadow: var(--shadow-lg);
   animation: modalSlideIn 0.25s ease;
+  font-family: jet brains, monospace;
 }
 
 .finish-icon { font-size: 40px; margin-bottom: 16px; }
@@ -33,13 +34,13 @@
 .btn-finish-cancel {
   padding: 10px 24px; background: var(--bg-input); border: 1px solid var(--border);
   border-radius: var(--radius-md); color: var(--text-primary); font-size: 14px;
-  font-weight: 600; cursor: pointer; transition: var(--transition);
+  font-weight: 600; cursor: pointer; transition: var(--transition); font-family: jet brains, monospace;
 }
 .btn-finish-cancel:hover { background: var(--bg-hover); }
 
 .btn-finish-confirm {
   padding: 10px 24px; background: var(--accent-orange); border: none;
   border-radius: var(--radius-md); color: white; font-size: 14px;
-  font-weight: 600; cursor: pointer; transition: var(--transition);
+  font-weight: 600; cursor: pointer; transition: var(--transition); font-family: jet brains, monospace; 
 }
 .btn-finish-confirm:hover { background: #b45309; }

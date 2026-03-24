@@ -32,6 +32,7 @@
   animation: modalSlideIn 0.3s ease;
   max-height: 90vh;
   overflow-y: auto;
+  font-family: jet brains, monospace;
 }
 
 /* ===== HEADER ===== */
@@ -73,6 +74,7 @@
   border-radius: var(--radius-md);
   font-size: 13px;
   margin-bottom: 12px;
+  font-family: jet brains, monospace;
 }
 
 /* ===== ROLE BADGE ===== */
@@ -80,6 +82,7 @@
 .profile-role-badge {
   font-size: 13px;
   color: var(--text-secondary);
+  font-family: jet brains, monospace;
 }
 
 .role-tag {

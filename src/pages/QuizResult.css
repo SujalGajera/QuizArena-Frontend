@@ -10,6 +10,7 @@
   background: var(--bg-primary);
   display: flex;
   flex-direction: column;
+  font-family: jet brains, monospace;
 }
 
 /* ===== NAVBAR ===== */
@@ -21,6 +22,7 @@
   padding: 12px 28px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
+  font-family: jet brains, monospace;
 }
 
 .result-nav-left {
@@ -39,6 +41,7 @@
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
+  font-family: jet brains, monospace;
 }
 
 .result-nav-right {
@@ -55,6 +58,7 @@
   width: 100%;
   margin: 0 auto;
   padding: 32px;
+  font-family: jet brains, monospace;
 }
 
 /* ===== SCORE SUMMARY CARD ===== */
@@ -68,6 +72,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   margin-bottom: 32px;
+  font-family: jet brains, monospace;
 }
 
 /* Score Circle */

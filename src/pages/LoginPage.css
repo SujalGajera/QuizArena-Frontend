@@ -32,9 +32,10 @@
 }
 
 .logo-text {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   color: var(--text-primary);
+  font-family: jet brains, monospace;
 }
 
 .login-hero {
@@ -51,6 +52,7 @@
   color: var(--text-primary);
   margin-bottom: 24px;
   letter-spacing: -2px;
+  font-family: jet brains, monospace;
 }
 
 .hero-subtitle {
@@ -59,6 +61,7 @@
   line-height: 1.7;
   max-width: 420px;
   margin-bottom: 40px;
+  font-family: jet brains, monospace;
 }
 
 .hero-stats {
@@ -83,12 +86,14 @@
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: jet brains, monospace;
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--accent-purple);
+  font-family: jet brains, monospace;
 }
 
 .hero-badges {
@@ -105,8 +110,9 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
   padding: 8px 18px;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-secondary);
+  font-family: jet brains, monospace;
 }
 
 .badge-dot {
@@ -117,8 +123,9 @@
 }
 
 .login-footer-text {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted);
+  font-family: jet brains, monospace;
 }
 
 /* ===== RIGHT PANEL ===== */
@@ -139,6 +146,7 @@
   width: 100%;
   max-width: 420px;
   box-shadow: var(--shadow-lg);
+  font-family: jet brains, monospace;
 }
 
 .form-title {
@@ -188,6 +196,7 @@
   color: var(--accent-purple-light);
   cursor: pointer;
   transition: var(--transition);
+  margin-bottom: 8px;
 }
 
 .forgot-link:hover {
