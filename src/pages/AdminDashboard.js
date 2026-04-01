@@ -102,17 +102,6 @@ function AdminDashboard({ user, onLogout }) {
     }
   }, []);
 
-  // Initial fetch + auto-refresh every 15s for real-time like updates
-  useEffect(() => {
-    fetchTournaments();
-    fetchPlayers();
-    const interval = setInterval(() => {
-        fetchTournaments(true);
-        if (activeTab === 'players') fetchPlayers(true);
-    }, 15000);
-    return () => clearInterval(interval);
-  }, [fetchTournaments, activeTab]);
-
   const fetchPlayers = useCallback(async (silent = false) => {
     if (!silent) setLoadingPlayers(true);
     try {
@@ -126,6 +115,17 @@ function AdminDashboard({ user, onLogout }) {
       if (!silent) setLoadingPlayers(false);
     }
   }, []);
+
+  // Initial fetch + auto-refresh every 15s for real-time like updates
+  useEffect(() => {
+    fetchTournaments();
+    fetchPlayers();
+    const interval = setInterval(() => {
+        fetchTournaments(true);
+        if (activeTab === 'players') fetchPlayers(true);
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [fetchTournaments, fetchPlayers, activeTab]);
 
   // ===== HANDLERS =====
 
