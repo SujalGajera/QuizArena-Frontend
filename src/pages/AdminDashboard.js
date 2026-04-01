@@ -121,8 +121,8 @@ function AdminDashboard({ user, onLogout }) {
     fetchTournaments();
     fetchPlayers();
     const interval = setInterval(() => {
-        fetchTournaments(true);
-        if (activeTab === 'players') fetchPlayers(true);
+      fetchTournaments(true);
+      if (activeTab === 'players') fetchPlayers(true);
     }, 15000);
     return () => clearInterval(interval);
   }, [fetchTournaments, fetchPlayers, activeTab]);
@@ -155,13 +155,13 @@ function AdminDashboard({ user, onLogout }) {
     );
   });
 
-  const totalPages = activeTab === 'tournaments' 
-      ? Math.ceil(filteredTournaments.length / tournamentsPerPage)
-      : Math.ceil(filteredPlayers.length / playersPerPage);
+  const totalPages = activeTab === 'tournaments'
+    ? Math.ceil(filteredTournaments.length / tournamentsPerPage)
+    : Math.ceil(filteredPlayers.length / playersPerPage);
 
-  const startIndex = activeTab === 'tournaments' 
-      ? (currentPage - 1) * tournamentsPerPage
-      : (currentPage - 1) * playersPerPage;
+  const startIndex = activeTab === 'tournaments'
+    ? (currentPage - 1) * tournamentsPerPage
+    : (currentPage - 1) * playersPerPage;
 
   const paginatedTournaments = filteredTournaments.slice(
     startIndex,
@@ -169,8 +169,8 @@ function AdminDashboard({ user, onLogout }) {
   );
 
   const paginatedPlayers = filteredPlayers.slice(
-      startIndex,
-      startIndex + playersPerPage
+    startIndex,
+    startIndex + playersPerPage
   );
 
   useEffect(() => {
@@ -207,21 +207,21 @@ function AdminDashboard({ user, onLogout }) {
   };
 
   const handleDeleteUser = async (playerId) => {
-      // ONLY the root admin can do this
-      if (window.confirm("WARNING: Are you sure you want to delete this player? This will permanently delete their account, scores, and likes. This action cannot be undone.")) {
-          try {
-              const result = await userService.deleteUser(playerId, currentUser.username);
-              if (result.success) {
-                  // Re-fetch players list
-                  fetchPlayers();
-              } else {
-                  alert("Failed to delete user: " + (result.message || "Unknown error"));
-              }
-          } catch (err) {
-              console.error("Failed to delete user", err);
-              alert("You do not have permission to delete users, or an error occurred.");
-          }
+    // ONLY the root admin can do this
+    if (window.confirm("WARNING: Are you sure you want to delete this player? This will permanently delete their account, scores, and likes. This action cannot be undone.")) {
+      try {
+        const result = await userService.deleteUser(playerId, currentUser.username);
+        if (result.success) {
+          // Re-fetch players list
+          fetchPlayers();
+        } else {
+          alert("Failed to delete user: " + (result.message || "Unknown error"));
+        }
+      } catch (err) {
+        console.error("Failed to delete user", err);
+        alert("You do not have permission to delete users, or an error occurred.");
       }
+    }
   };
 
   const handleTournamentSaved = () => {
@@ -300,214 +300,214 @@ function AdminDashboard({ user, onLogout }) {
 
         {/* CONTROLS (TABS) */}
         <div className="admin-tabs">
-            <button 
-                className={`tab-btn ${activeTab === 'tournaments' ? 'active' : ''}`}
-                onClick={() => setActiveTab('tournaments')}
-            >
-                Tournaments
-            </button>
-            <button 
-                className={`tab-btn ${activeTab === 'players' ? 'active' : ''}`}
-                onClick={() => setActiveTab('players')}
-            >
-                Players Management
-            </button>
+          <button
+            className={`tab-btn ${activeTab === 'tournaments' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tournaments')}
+          >
+            Tournaments
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'players' ? 'active' : ''}`}
+            onClick={() => setActiveTab('players')}
+          >
+            Players Management
+          </button>
         </div>
 
         {/* TABLE DATA */}
         {activeTab === 'tournaments' ? (
-        <div className="tournament-table-container">
-          {loading ? (
-            <div className="table-loading">Loading tournaments...</div>
-          ) : (
-            <>
-              <div className="table-header-row">
-                <div className="th-creator">CREATOR</div>
-                <div className="th-name">TOURNAMENT NAME</div>
-                <div className="th-category">CATEGORY</div>
-                <div className="th-difficulty">DIFFICULTY</div>
-                <div className="th-duration">DURATION</div>
-                <div className="th-actions">ACTIONS</div>
-              </div>
-
-              {paginatedTournaments.length === 0 ? (
-                <div className="table-empty">
-                  {searchTerm
-                    ? 'No tournaments match your search.'
-                    : 'No tournaments yet. Create your first tournament!'}
-                </div>
-              ) : (
-                paginatedTournaments.map((tournament) => (
-                  <div key={tournament.id} className="table-row">
-                    <div className="td-creator">
-                      <div className="creator-avatar"
-                        style={{ background: getCategoryColor(tournament.category) }}>
-                        {getInitials(tournament.creator)}
-                      </div>
-                      <span className="creator-name">{tournament.creator}</span>
-                    </div>
-                    <div className="td-name">
-                      <span className="tournament-name-link"
-                        onClick={() => handleViewQuestions(tournament)}>
-                        {tournament.name}
-                      </span>
-                    </div>
-                    <div className="td-category">
-                      <span className="category-tag"
-                        style={{ background: getCategoryColor(tournament.category) }}>
-                        {tournament.category.length > 18
-                          ? tournament.category.substring(0, 18) + '...'
-                          : tournament.category}
-                      </span>
-                    </div>
-                    <div className="td-difficulty">
-                      <span className="difficulty-tag"
-                        style={{ background: getDifficultyColor(tournament.difficulty) }}>
-                        {tournament.difficulty.charAt(0).toUpperCase() +
-                          tournament.difficulty.slice(1)}
-                      </span>
-                    </div>
-
-                    <div className="td-duration">
-                      {formatDate(tournament.startDate)} — {formatDate(tournament.endDate)}
-                    </div>
-                    <div className="td-actions">
-                      <button className="action-btn action-edit" title="Edit"
-                        onClick={() => handleEdit(tournament)}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" strokeWidth="2">
-                          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
-                      </button>
-                      <button className="action-btn action-view" title="View Questions"
-                        onClick={() => handleViewQuestions(tournament)}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" strokeWidth="2">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                          <circle cx="12" cy="12" r="3" />
-                        </svg>
-                      </button>
-                      <button className="action-btn action-delete" title="Delete"
-                        onClick={() => handleDeleteClick(tournament)}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" strokeWidth="2">
-                          <polyline points="3,6 5,6 21,6" />
-                          <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-
-              {filteredTournaments.length > 0 && (
-                <div className="table-pagination">
-                  <div className="pagination-info">
-                    Showing {startIndex + 1} to{' '}
-                    {Math.min(startIndex + tournamentsPerPage, filteredTournaments.length)} of{' '}
-                    <span className="pagination-highlight">{filteredTournaments.length}</span>{' '}
-                    tournaments
-                  </div>
-                  <div className="pagination-controls">
-                    <button className="page-btn" disabled={currentPage === 1}
-                      onClick={() => setCurrentPage(currentPage - 1)}>&lt;</button>
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <button key={i + 1}
-                        className={`page-btn ${currentPage === i + 1 ? 'page-active' : ''}`}
-                        onClick={() => setCurrentPage(i + 1)}>
-                        {i + 1}
-                      </button>
-                    ))}
-                    <button className="page-btn" disabled={currentPage === totalPages}
-                      onClick={() => setCurrentPage(currentPage + 1)}>&gt;</button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-        ) : (
-        <div className="tournament-table-container">
-            {loadingPlayers ? (
-                <div className="table-loading">Loading players...</div>
+          <div className="tournament-table-container">
+            {loading ? (
+              <div className="table-loading">Loading tournaments...</div>
             ) : (
-                <>
+              <>
+                <div className="table-header-row">
+                  <div className="th-creator">CREATOR</div>
+                  <div className="th-name">TOURNAMENT NAME</div>
+                  <div className="th-category">CATEGORY</div>
+                  <div className="th-difficulty">DIFFICULTY</div>
+                  <div className="th-duration">DURATION</div>
+                  <div className="th-actions">ACTIONS</div>
+                </div>
+
+                {paginatedTournaments.length === 0 ? (
+                  <div className="table-empty">
+                    {searchTerm
+                      ? 'No tournaments match your search.'
+                      : 'No tournaments yet. Create your first tournament!'}
+                  </div>
+                ) : (
+                  paginatedTournaments.map((tournament) => (
+                    <div key={tournament.id} className="table-row">
+                      <div className="td-creator">
+                        <div className="creator-avatar"
+                          style={{ background: getCategoryColor(tournament.category) }}>
+                          {getInitials(tournament.creator)}
+                        </div>
+                        <span className="creator-name">{tournament.creator}</span>
+                      </div>
+                      <div className="td-name">
+                        <span className="tournament-name-link"
+                          onClick={() => handleViewQuestions(tournament)}>
+                          {tournament.name}
+                        </span>
+                      </div>
+                      <div className="td-category">
+                        <span className="category-tag"
+                          style={{ background: getCategoryColor(tournament.category) }}>
+                          {tournament.category.length > 18
+                            ? tournament.category.substring(0, 18) + '...'
+                            : tournament.category}
+                        </span>
+                      </div>
+                      <div className="td-difficulty">
+                        <span className="difficulty-tag"
+                          style={{ background: getDifficultyColor(tournament.difficulty) }}>
+                          {tournament.difficulty.charAt(0).toUpperCase() +
+                            tournament.difficulty.slice(1)}
+                        </span>
+                      </div>
+
+                      <div className="td-duration">
+                        {formatDate(tournament.startDate)} — {formatDate(tournament.endDate)}
+                      </div>
+                      <div className="td-actions">
+                        <button className="action-btn action-edit" title="Edit"
+                          onClick={() => handleEdit(tournament)}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                        </button>
+                        <button className="action-btn action-view" title="View Questions"
+                          onClick={() => handleViewQuestions(tournament)}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        </button>
+                        <button className="action-btn action-delete" title="Delete"
+                          onClick={() => handleDeleteClick(tournament)}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2">
+                            <polyline points="3,6 5,6 21,6" />
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+
+                {filteredTournaments.length > 0 && (
+                  <div className="table-pagination">
+                    <div className="pagination-info">
+                      Showing {startIndex + 1} to{' '}
+                      {Math.min(startIndex + tournamentsPerPage, filteredTournaments.length)} of{' '}
+                      <span className="pagination-highlight">{filteredTournaments.length}</span>{' '}
+                      tournaments
+                    </div>
+                    <div className="pagination-controls">
+                      <button className="page-btn" disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}>&lt;</button>
+                      {Array.from({ length: totalPages }, (_, i) => (
+                        <button key={i + 1}
+                          className={`page-btn ${currentPage === i + 1 ? 'page-active' : ''}`}
+                          onClick={() => setCurrentPage(i + 1)}>
+                          {i + 1}
+                        </button>
+                      ))}
+                      <button className="page-btn" disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(currentPage + 1)}>&gt;</button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="tournament-table-container">
+            {loadingPlayers ? (
+              <div className="table-loading">Loading players...</div>
+            ) : (
+              <>
                 <div className="table-header-row player-header-row">
-                    <div className="th-player">PLAYER</div>
-                    <div className="th-email">EMAIL</div>
-                    <div className="th-city">CITY</div>
-                    <div className="th-joined">JOINED</div>
-                    <div className="th-actions">ACTIONS</div>
+                  <div className="th-player">PLAYER</div>
+                  <div className="th-email">EMAIL</div>
+                  <div className="th-city">CITY</div>
+                  <div className="th-joined">JOINED</div>
+                  <div className="th-actions">ACTIONS</div>
                 </div>
 
                 {paginatedPlayers.length === 0 ? (
-                    <div className="table-empty">
+                  <div className="table-empty">
                     {searchTerm
-                        ? 'No players match your search.'
-                        : 'No players registered yet.'}
-                    </div>
+                      ? 'No players match your search.'
+                      : 'No players registered yet.'}
+                  </div>
                 ) : (
-                    paginatedPlayers.map((player) => (
+                  paginatedPlayers.map((player) => (
                     <div key={player.id} className="table-row player-row">
-                        <div className="td-player">
+                      <div className="td-player">
                         <div className="creator-avatar" style={{ background: '#3b82f6' }}>
-                            {getInitials(player.firstName + ' ' + player.lastName)}
+                          {getInitials(player.firstName + ' ' + player.lastName)}
                         </div>
                         <div className="player-details">
-                            <span className="creator-name">{player.firstName} {player.lastName}</span>
-                            <span className="player-username">@{player.username}</span>
+                          <span className="creator-name">{player.firstName} {player.lastName}</span>
+                          <span className="player-username">@{player.username}</span>
                         </div>
-                        </div>
-                        <div className="td-email">{player.email}</div>
-                        <div className="td-city">{player.city || '-'}</div>
-                        <div className="td-joined">{formatDate(player.createdAt)}</div>
-                        <div className="td-actions">
+                      </div>
+                      <div className="td-email">{player.email}</div>
+                      <div className="td-city">{player.city || '-'}</div>
+                      <div className="td-joined">{formatDate(player.createdAt)}</div>
+                      <div className="td-actions">
                         {/* ONLY ROOT ADMIN CAN DELETE */}
                         {currentUser.username === 'admin' ? (
-                            <button className="action-btn action-delete" title="Delete User"
-                                onClick={() => handleDeleteUser(player.id)}>
+                          <button className="action-btn action-delete" title="Delete User"
+                            onClick={() => handleDeleteUser(player.id)}>
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" strokeWidth="2">
-                                <polyline points="3,6 5,6 21,6" />
-                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                              stroke="currentColor" strokeWidth="2">
+                              <polyline points="3,6 5,6 21,6" />
+                              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
                             </svg>
-                            Delete
-                            </button>
+                            Del
+                          </button>
                         ) : (
-                            <span style={{color: '#9ca3af', fontSize: '12px'}}>Root admin only</span>
+                          <span style={{ color: '#9ca3af', fontSize: '12px' }}>Root admin only</span>
                         )}
-                        </div>
+                      </div>
                     </div>
-                    ))
+                  ))
                 )}
 
                 {filteredPlayers.length > 0 && (
-                    <div className="table-pagination">
+                  <div className="table-pagination">
                     <div className="pagination-info">
-                        Showing {startIndex + 1} to{' '}
-                        {Math.min(startIndex + playersPerPage, filteredPlayers.length)} of{' '}
-                        <span className="pagination-highlight">{filteredPlayers.length}</span>{' '}
-                        players
+                      Showing {startIndex + 1} to{' '}
+                      {Math.min(startIndex + playersPerPage, filteredPlayers.length)} of{' '}
+                      <span className="pagination-highlight">{filteredPlayers.length}</span>{' '}
+                      players
                     </div>
                     <div className="pagination-controls">
-                        <button className="page-btn" disabled={currentPage === 1}
+                      <button className="page-btn" disabled={currentPage === 1}
                         onClick={() => setCurrentPage(currentPage - 1)}>&lt;</button>
-                        {Array.from({ length: totalPages }, (_, i) => (
+                      {Array.from({ length: totalPages }, (_, i) => (
                         <button key={i + 1}
-                            className={`page-btn ${currentPage === i + 1 ? 'page-active' : ''}`}
-                            onClick={() => setCurrentPage(i + 1)}>
-                            {i + 1}
+                          className={`page-btn ${currentPage === i + 1 ? 'page-active' : ''}`}
+                          onClick={() => setCurrentPage(i + 1)}>
+                          {i + 1}
                         </button>
-                        ))}
-                        <button className="page-btn" disabled={currentPage === totalPages}
+                      ))}
+                      <button className="page-btn" disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage(currentPage + 1)}>&gt;</button>
                     </div>
-                    </div>
+                  </div>
                 )}
-                </>
+              </>
             )}
-        </div>
+          </div>
         )}
       </div>
 
