@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import tournamentService from '../services/tournamentService';
 import authService from '../services/authService';
+import userService from '../services/userService';
 import TournamentModal from '../components/TournamentModal';
 import DeleteConfirm from '../components/DeleteConfirm';
 import TournamentQuestions from '../components/TournamentQuestions';
@@ -66,10 +67,15 @@ function AdminDashboard({ user, onLogout }) {
   // ===== STATE =====
 
   const [tournaments, setTournaments] = useState([]);
+  const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingPlayers, setLoadingPlayers] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const tournamentsPerPage = 4;
+  const playersPerPage = 5;
+
+  const [activeTab, setActiveTab] = useState('tournaments'); // 'tournaments' or 'players'
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -99,9 +105,27 @@ function AdminDashboard({ user, onLogout }) {
   // Initial fetch + auto-refresh every 15s for real-time like updates
   useEffect(() => {
     fetchTournaments();
-    const interval = setInterval(() => fetchTournaments(true), 15000);
+    fetchPlayers();
+    const interval = setInterval(() => {
+        fetchTournaments(true);
+        if (activeTab === 'players') fetchPlayers(true);
+    }, 15000);
     return () => clearInterval(interval);
-  }, [fetchTournaments]);
+  }, [fetchTournaments, activeTab]);
+
+  const fetchPlayers = useCallback(async (silent = false) => {
+    if (!silent) setLoadingPlayers(true);
+    try {
+      const data = await userService.getAllPlayers();
+      if (data.success) {
+        setPlayers(data.players || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch players:', err);
+    } finally {
+      if (!silent) setLoadingPlayers(false);
+    }
+  }, []);
 
   // ===== HANDLERS =====
 
@@ -121,16 +145,37 @@ function AdminDashboard({ user, onLogout }) {
     );
   });
 
-  const totalPages = Math.ceil(filteredTournaments.length / tournamentsPerPage);
-  const startIndex = (currentPage - 1) * tournamentsPerPage;
+  const filteredPlayers = players.filter((p) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      p.username.toLowerCase().includes(term) ||
+      p.email.toLowerCase().includes(term) ||
+      p.firstName.toLowerCase().includes(term) ||
+      p.lastName.toLowerCase().includes(term)
+    );
+  });
+
+  const totalPages = activeTab === 'tournaments' 
+      ? Math.ceil(filteredTournaments.length / tournamentsPerPage)
+      : Math.ceil(filteredPlayers.length / playersPerPage);
+
+  const startIndex = activeTab === 'tournaments' 
+      ? (currentPage - 1) * tournamentsPerPage
+      : (currentPage - 1) * playersPerPage;
+
   const paginatedTournaments = filteredTournaments.slice(
     startIndex,
     startIndex + tournamentsPerPage
   );
 
+  const paginatedPlayers = filteredPlayers.slice(
+      startIndex,
+      startIndex + playersPerPage
+  );
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, activeTab]);
 
   const handleEdit = (tournament) => {
     setSelectedTournament(tournament);
@@ -159,6 +204,24 @@ function AdminDashboard({ user, onLogout }) {
     } catch (err) {
       console.error('Failed to delete tournament:', err);
     }
+  };
+
+  const handleDeleteUser = async (playerId) => {
+      // ONLY the root admin can do this
+      if (window.confirm("WARNING: Are you sure you want to delete this player? This will permanently delete their account, scores, and likes. This action cannot be undone.")) {
+          try {
+              const result = await userService.deleteUser(playerId, currentUser.username);
+              if (result.success) {
+                  // Re-fetch players list
+                  fetchPlayers();
+              } else {
+                  alert("Failed to delete user: " + (result.message || "Unknown error"));
+              }
+          } catch (err) {
+              console.error("Failed to delete user", err);
+              alert("You do not have permission to delete users, or an error occurred.");
+          }
+      }
   };
 
   const handleTournamentSaved = () => {
@@ -215,7 +278,7 @@ function AdminDashboard({ user, onLogout }) {
         <div className="admin-header">
           <div className="admin-header-left">
             <h1 className="admin-title">Admin Dashboard</h1>
-            <p className="admin-subtitle">Central hub for tournament oversight and coordination</p>
+            <p className="admin-subtitle">Central hub for tournament and player oversight</p>
           </div>
           <div className="admin-header-right">
             <div className="search-container">
@@ -227,7 +290,7 @@ function AdminDashboard({ user, onLogout }) {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Search tournaments..."
+                placeholder={`Search ${activeTab}...`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -235,7 +298,24 @@ function AdminDashboard({ user, onLogout }) {
           </div>
         </div>
 
-        {/* TABLE */}
+        {/* CONTROLS (TABS) */}
+        <div className="admin-tabs">
+            <button 
+                className={`tab-btn ${activeTab === 'tournaments' ? 'active' : ''}`}
+                onClick={() => setActiveTab('tournaments')}
+            >
+                Tournaments
+            </button>
+            <button 
+                className={`tab-btn ${activeTab === 'players' ? 'active' : ''}`}
+                onClick={() => setActiveTab('players')}
+            >
+                Players Management
+            </button>
+        </div>
+
+        {/* TABLE DATA */}
+        {activeTab === 'tournaments' ? (
         <div className="tournament-table-container">
           {loading ? (
             <div className="table-loading">Loading tournaments...</div>
@@ -347,6 +427,88 @@ function AdminDashboard({ user, onLogout }) {
             </>
           )}
         </div>
+        ) : (
+        <div className="tournament-table-container">
+            {loadingPlayers ? (
+                <div className="table-loading">Loading players...</div>
+            ) : (
+                <>
+                <div className="table-header-row player-header-row">
+                    <div className="th-player">PLAYER</div>
+                    <div className="th-email">EMAIL</div>
+                    <div className="th-city">CITY</div>
+                    <div className="th-joined">JOINED</div>
+                    <div className="th-actions">ACTIONS</div>
+                </div>
+
+                {paginatedPlayers.length === 0 ? (
+                    <div className="table-empty">
+                    {searchTerm
+                        ? 'No players match your search.'
+                        : 'No players registered yet.'}
+                    </div>
+                ) : (
+                    paginatedPlayers.map((player) => (
+                    <div key={player.id} className="table-row player-row">
+                        <div className="td-player">
+                        <div className="creator-avatar" style={{ background: '#3b82f6' }}>
+                            {getInitials(player.firstName + ' ' + player.lastName)}
+                        </div>
+                        <div className="player-details">
+                            <span className="creator-name">{player.firstName} {player.lastName}</span>
+                            <span className="player-username">@{player.username}</span>
+                        </div>
+                        </div>
+                        <div className="td-email">{player.email}</div>
+                        <div className="td-city">{player.city || '-'}</div>
+                        <div className="td-joined">{formatDate(player.createdAt)}</div>
+                        <div className="td-actions">
+                        {/* ONLY ROOT ADMIN CAN DELETE */}
+                        {currentUser.username === 'admin' ? (
+                            <button className="action-btn action-delete" title="Delete User"
+                                onClick={() => handleDeleteUser(player.id)}>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" strokeWidth="2">
+                                <polyline points="3,6 5,6 21,6" />
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                            </svg>
+                            Delete
+                            </button>
+                        ) : (
+                            <span style={{color: '#9ca3af', fontSize: '12px'}}>Root admin only</span>
+                        )}
+                        </div>
+                    </div>
+                    ))
+                )}
+
+                {filteredPlayers.length > 0 && (
+                    <div className="table-pagination">
+                    <div className="pagination-info">
+                        Showing {startIndex + 1} to{' '}
+                        {Math.min(startIndex + playersPerPage, filteredPlayers.length)} of{' '}
+                        <span className="pagination-highlight">{filteredPlayers.length}</span>{' '}
+                        players
+                    </div>
+                    <div className="pagination-controls">
+                        <button className="page-btn" disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}>&lt;</button>
+                        {Array.from({ length: totalPages }, (_, i) => (
+                        <button key={i + 1}
+                            className={`page-btn ${currentPage === i + 1 ? 'page-active' : ''}`}
+                            onClick={() => setCurrentPage(i + 1)}>
+                            {i + 1}
+                        </button>
+                        ))}
+                        <button className="page-btn" disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(currentPage + 1)}>&gt;</button>
+                    </div>
+                    </div>
+                )}
+                </>
+            )}
+        </div>
+        )}
       </div>
 
       {/* FOOTER */}

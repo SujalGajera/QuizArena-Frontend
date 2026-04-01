@@ -24,6 +24,18 @@ const userService = {
   getTournamentScores: async (tournamentId) => {
     const response = await axios.get(`${API_URL}/scores/${tournamentId}`);
     return response.data;
+  },
+
+  // Get all players (for admin view)
+  getAllPlayers: async () => {
+    const response = await axios.get(`${API_URL}/players`);
+    return response.data;
+  },
+
+  // Delete user (requires root admin username)
+  deleteUser: async (userId, adminUsername) => {
+    const response = await axios.delete(`${API_URL}/${userId}?adminUsername=${adminUsername}`);
+    return response.data;
   }
 };
 
